@@ -1,27 +1,96 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  line-height: 1.6;
-  font-size: 18px;
+#light,
+:root {
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  --board-shadow: rgba(0, 0, 0, 0.4);
+
+  --anchor-rgb: 100, 0, 0;
+
+  --cell-alive-rgb: 200, 0, 0;
+  --cell-dead-rgb: 250, 250, 250;
+
+  --player-rgb: 0, 0, 200;
+  --cheese-rgb: 252, 161, 3;
+  --foe-rgb: 200, 0, 200;
+  --home-closed-rgb: 200, 0, 0;
+  --home-opened-rgb: 0, 150, 0;
+
+  --notify-lose-font-rgb: 200, 0, 0;
+  --notify-alert-font-rgb: 152, 61, 3;
+  --notify-win-font-rgb: 0, 100, 0;
+
+}
+
+#dark,
+:root:has(#dark:checked) {
+
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 14, 19, 20;
+  --background-end-rgb: 0, 0, 0;
+
+  --board-shadow: rgba(255, 255, 255, 0.4);
+
+  --anchor-rgb: 200, 0, 0;
+
+  --cell-alive-rgb: 100, 0, 0;
+  --cell-dead-rgb: 50, 50, 50;
+
+  --player-rgb: 125, 125, 255;
+  --cheese-rgb: 255, 255, 125;
+  --foe-rgb: 255, 125, 255;
+
+  --home-closed-rgb: 255, 125, 125;
+  --home-opened-rgb: 125, 255, 125;
+
+  --notify-lose-font-rgb: 255, 0, 0;
+  --notify-alert-font-rgb: 255, 255, 125;
+  --notify-win-font-rgb: 125, 255, 125;
+
 }
 
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 a {
-  color: #0070f3;
+  color: inherit;
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
-img {
-  max-width: 100%;
-  display: block;
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
 }

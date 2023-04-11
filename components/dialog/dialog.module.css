@@ -1,0 +1,41 @@
+.overlay {
+  background-color: rgb(var(--background-start-rgb));
+  margin: 0 auto;
+  padding: 1% 2% 0 2%;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+
+  font-size: 1.6rem;
+  text-align: center;
+  
+  border: none;
+  border-radius: 5px;
+
+}
+
+.overlay::backdrop {
+  background-color: rgb(0 0 0 /.5);
+}
+
+.modal {
+  width: 500px;
+  height: 600px;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 1.5rem;
+}
+
+.icon {
+  color: rgb(var(--foreground-rgb));
+}
+
+.body {
+  padding: 1.2rem;
+}
