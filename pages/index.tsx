@@ -30,15 +30,17 @@ export interface localLoseProps {
 }
 
 export interface localWinProps {
-  wins?: {
-    date: string;
-    cheeses: number;
-    steps: number;
-  }[];
+  date: string;
+  cheeses: number;
+  steps: number;
+}
+
+export interface localHistoryProps {
+  wins: localWinProps[] | null;
+  loses: localLoseProps[] | null;
 }
 
 const inter = Inter({ subsets: ['latin'] })
-
 
 export default function Home() {
 
@@ -48,6 +50,8 @@ export default function Home() {
   const [notification, setNotification] = useState<notificationProps | null>(null);
 
   const [localTheme, setLocalTheme] = useState<localThemeProps | null>(null);
+
+  const [localHistory, setLocalHistory] = useState<localHistoryProps>({wins: null, loses: null});
 
   function handleShowDoubtModal() {
     const dialog = document.querySelector(`dialog#doubt`) as HTMLDialogElement;
@@ -70,18 +74,49 @@ export default function Home() {
     }
   }
 
-  function changeLanguage(language: 'en-US' | 'pt-BR') {
-    
+  function changeLanguage(language: 'en-US' | 'pt-BR') {   
     router.replace(asPath, undefined, {locale: language});  
   }
 
+  useEffect(() => {
+
+    if (localStorage.getItem('@app:wins') && localStorage.getItem('@app:loses')) {
+      let localWins: localWinProps[] = JSON.parse(localStorage.getItem('@app:wins') as string);
+      let localLoses: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
+
+
+      setLocalHistory({
+        wins: localWins,
+        loses: localLoses    
+      });
+    }
+
+    else if (localStorage.getItem('@app:wins') && !localStorage.getItem('@app:loses')) {
+      let localWins: localWinProps[] = JSON.parse(localStorage.getItem('@app:wins') as string);
+
+      setLocalHistory({
+        ...localHistory,
+        wins: localWins    
+      });
+    }
+
+    else if (!localStorage.getItem('@app:wins') && localStorage.getItem('@app:loses')) {
+      let localLoses: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
+
+      setLocalHistory({
+        ...localHistory,
+        loses: localLoses    
+      });
+    }
+
+  }, []);
+  
   useEffect(() => {
 
     if (localStorage.getItem('@app:theme')) {
       let localTheme = JSON.parse(localStorage.getItem('@app:theme') as string);
 
       setLocalTheme({
-        ...localTheme,
         theme: localTheme.value
       })
     }
@@ -197,7 +232,11 @@ export default function Home() {
         { locale == 'pt-BR' && 
           <p className={`${inter.className} ${styles.inform}`}>pressione <kbd>⬅️⬆️⬇️➡️</kbd> para se mover ou <kbd>ENTER</kbd> para recomeçar...</p>
         }
-        <Board notificationSetter={setNotification} />
+        <Board
+          notificationSetter={setNotification}
+          localHistory={localHistory}
+          localHistorySetter={setLocalHistory}
+        />
       </main>
       <Dialog name='doubt'>
         <article>
@@ -217,7 +256,7 @@ export default function Home() {
                 <p className={`${inter.className} ${styles.paragraph}`}>...a mathematical model consisting of a grid of cells that evolve over time according to a set of simple rules based on the states of neighboring cells. Each cell can have a finite number of states, typically represented by colors, and the rules define how the cells change from one time step to the next. Cellular automata have been used to model a wide range of natural and artificial phenomena, including the behavior of fluids, the growth of plants, and the spread of disease.</p>
               </details>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>Cells in black/white tones represent dead cells, whereas cells in red tones mean live cells. Keep yourself inside dead cells. If you touch a living cell, it's game over.</p>
+              <p className={`${inter.className} ${styles.paragraph}`}>Cells in black/white tones represent dead cells, whereas cells in red tones mean live cells. Keep yourself inside dead cells. If you touch a living cell, your life will be reduced until you eventually lose the game.</p>
               <br/>
               <p className={`${inter.className} ${styles.paragraph}`}><strong>It's up to you to investigate how this cellular automaton evolves so you can safely move along the board!</strong></p>
               <br/>
@@ -240,7 +279,7 @@ export default function Home() {
                 <p className={`${inter.className} ${styles.paragraph}`}>...um modelo matemático que consiste em uma grade de células que evoluem ao longo do tempo de acordo com um conjunto de regras simples baseadas nos estados das células vizinhas. Cada célula pode ter um número finito de estados, geralmente representados por cores, e as regras definem como as células mudam de uma etapa de tempo para a próxima. Autômatos celulares têm sido usados ​​para modelar uma ampla gama de fenômenos naturais e artificiais, incluindo o comportamento de fluidos, o crescimento de plantas e a disseminação de doenças. </p>
               </details>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, é fim de jogo.</p>
+              <p className={`${inter.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, terá sua vida reduzida, até eventualmente morrer de vez.</p>
               <br/>
               <p className={`${inter.className} ${styles.paragraph}`}><strong>Cabe a você investigar como esse autômato celular evolui para que você possa se mover com segurança pelo tabuleiro!</strong></p>
               <br/>
@@ -252,12 +291,12 @@ export default function Home() {
       <Dialog name='config'>
         <article>
           { locale == 'en-US' && 
-            <div className={`${inter.className} ${styles.themeSet}`}>
+            <div className={`${inter.className} ${styles.configSet}`}>
               <p
-                className={`${inter.className} ${styles.themeText}`}>
+                className={`${inter.className} ${styles.configText}`}>
                   Set theme
               </p>
-              <div className={styles.themeSet}>
+              <div className={styles.configSet}>
                 <input
                   name='theme'
                   onChange={() => storeChosenTheme('light')}
@@ -272,7 +311,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='theme'
-                  className={`${inter.className} ${styles.themeText}`}>
+                  className={`${inter.className} ${styles.configText}`}>
                     Light | Dark
                 </label>
                 <input
@@ -291,12 +330,12 @@ export default function Home() {
             </div>
           }
           { locale == 'pt-BR' && 
-            <div className={`${inter.className} ${styles.themeSet}`}>
+            <div className={`${inter.className} ${styles.configSet}`}>
               <p
-                className={`${inter.className} ${styles.themeText}`}>
+                className={`${inter.className} ${styles.configText}`}>
                   Definir tema
               </p>
-              <div className={styles.themeSet}>
+              <div className={styles.configSet}>
                 <input
                   name='theme'
                   onChange={() => storeChosenTheme('light')}
@@ -311,7 +350,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='theme'
-                  className={`${inter.className} ${styles.themeText}`}>
+                  className={`${inter.className} ${styles.configText}`}>
                     Claro | Escuro
                 </label>
                 <input
@@ -330,12 +369,12 @@ export default function Home() {
             </div>
           }
           <br/>
-          <div className={`${inter.className} ${styles.themeSet}`}>
+          <div className={`${inter.className} ${styles.configSet}`}>
             <p
-              className={`${inter.className} ${styles.themeText}`}>
+              className={`${inter.className} ${styles.configText}`}>
                 {`${locale == 'pt-BR' ? 'Definir idioma' : 'Set language'}`}
             </p>
-            <div className={styles.themeSet}>
+            <div className={styles.configSet}>
               <input
                 name='language'
                 onChange={() => changeLanguage('en-US')}
@@ -348,7 +387,7 @@ export default function Home() {
               />
               <label
                 htmlFor='theme'
-                className={`${inter.className} ${styles.themeText}`}>
+                className={`${inter.className} ${styles.configText}`}>
                   English | Português
               </label>
               <input
@@ -364,13 +403,87 @@ export default function Home() {
             </div>
           </div>                  
           <br/>
-          {/* { localStorage && JSON.parse(localStorage.getItem('@app:loses') as string).map((item: localLoseProps) => (
-            <div key={item.date}>
-              <p>{item.date}</p>
-              <p>{item.reason}</p>
-              <p>{item.steps}</p>
-            </div>
-          ))} */}
+          { localHistory?.wins &&
+            <table className={styles.localHistory}>
+              { locale == 'en-US' && 
+                <>
+                  <caption>Five Best Wins</caption>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Cheeses</th>
+                      <th>Steps</th>
+                    </tr>
+                  </thead>
+                </>
+              }
+              { locale == 'pt-BR' && 
+                <>
+                  <caption>Cinco Melhores Vitórias</caption>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Queijos</th>
+                      <th>Passos</th>
+                    </tr>
+                  </thead>
+                </>
+              }
+              <tbody>
+                {localHistory.wins.map((item: localWinProps) => (
+                    <tr>
+                      <td>{item.date}</td>
+                      <td>{item.cheeses}</td>
+                      <td>{item.steps}</td>
+                    </tr>
+                ))}          
+              </tbody>
+            </table>
+          }
+          <br/>
+          { localHistory?.loses &&
+            <table className={styles.localHistory}>
+              { locale == 'en-US' && 
+                <>
+                  <caption>Five Best Loses</caption>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Steps</th>
+                      <th>Cause of death</th>
+                    </tr>
+                  </thead>
+                </>
+              }
+              { locale == 'pt-BR' && 
+                <>
+                  <caption>Cinco Melhores Derrotas</caption>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Passos</th>
+                      <th>Causa da morte</th>
+                    </tr>
+                  </thead>
+                </>
+              }
+              <tbody>
+                {localHistory.loses.map((item: localLoseProps) => (
+                    <tr>
+                      <td>{item.date}</td>
+                      <td>{item.steps}</td>
+                      <td>{ locale == 'pt-BR'
+                        ? item.reason == 'cat'
+                          ? 'Gato'
+                          : 'Célula'
+                        : item.reason }
+                      </td>
+                    </tr>
+                ))}          
+              </tbody>
+            </table>
+          }
+          <br/>
           { locale == 'en-US' && 
             <>
               <p className={`${inter.className} ${styles.paragraph}`}>Game inspired <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">by this SigmaGeek challenge</a>.</p>

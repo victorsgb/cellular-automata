@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 
 // Custom components
 import Cell from '../cell';
+import LivesBar from '../livesBar';
 
 // Custom hooks
 import { useData } from '../../hooks/data';
@@ -18,7 +19,7 @@ import styles from './board.module.css';
 import { GiCheeseWedge } from 'react-icons/gi';
 
 // Type imports
-import { localLoseProps, localWinProps, notificationProps } from '../../pages';
+import { localHistoryProps, localLoseProps, localWinProps, notificationProps } from '../../pages';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -31,6 +32,7 @@ interface cheeseProps {
 interface playerProps {
   cheeses: number;
   cell_id: number;
+  lives: number;
   position: number[];
 }
 
@@ -46,10 +48,12 @@ interface exitProps {
 }
 
 interface BoardProps {
-  notificationSetter: Dispatch<SetStateAction<notificationProps | null>>
+  notificationSetter: Dispatch<SetStateAction<notificationProps | null>>;
+  localHistory: localHistoryProps | null;
+  localHistorySetter: Dispatch<SetStateAction<localHistoryProps | null>>;
 }
 
-export default function Board({ notificationSetter }: BoardProps){
+export default function Board({ notificationSetter, localHistory, localHistorySetter }: BoardProps){
 
   const { locale } = useRouter();
 
@@ -72,6 +76,7 @@ export default function Board({ notificationSetter }: BoardProps){
   const [player, setPlayer] = useState<playerProps>({
     cheeses: -1,
     cell_id: 0,
+    lives: 3,
     position: [0, 0]
   })
 
@@ -170,40 +175,70 @@ export default function Board({ notificationSetter }: BoardProps){
       let matrixValuesUpdated = mx.updateMatrix(matrix.values);
 
       if (matrixValuesUpdated[newPlayerPosition[0]][newPlayerPosition[1]]) {
-        // Condition to lose by stepping on a living cell
-              // Condition to lose by foe!
-        setGameOver(true);
-        { locale == 'en-US' && 
-          notificationSetter({
-            type: 'lose',
-            message: 'Whoa... You touched a living cell!'
-          });
-        }
-        { locale == 'pt-BR' && 
-          notificationSetter({
-            type: 'lose',
-            message: 'Ops... Você tocou uma célula viva!'
-          });
-        }
-        if (localStorage) {
-          let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
 
-          if (loseHistory) {
-            localStorage.setItem('@app:loses', JSON.stringify(
-              [...loseHistory, {
+        if (player.lives - 1 == 0) {
+
+          // Condition to lose by stepping on a living cell      
+          setGameOver(true);
+          { locale == 'en-US' && 
+            notificationSetter({
+              type: 'lose',
+              message: 'Whoa... You touched a living cell!'
+            });
+          }
+          { locale == 'pt-BR' && 
+            notificationSetter({
+              type: 'lose',
+              message: 'Ops... Você tocou uma célula viva!'
+            });
+          }
+
+          if (localStorage) {
+            let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
+
+            if (loseHistory) {
+
+              let fiveBestLoses: localLoseProps[] = [...loseHistory, {
                 date: new Date(),
                 steps: stepsCount,
                 reason: 'cell'
-              }]
-            ))
-          } else {
-            localStorage.setItem('@app:loses', JSON.stringify([{
-              date: new Date(),
-              steps: stepsCount,
-              reason: 'cell'
-            }]));
+              }].sort((a, b) => b.steps - a.steps).slice(0, 5) as localLoseProps[];
+
+              localStorage.setItem('@app:loses', JSON.stringify(fiveBestLoses))
+
+              if (localHistory) {
+                localHistorySetter({
+                  ...localHistory,
+                  loses: fiveBestLoses
+                })
+              }
+
+            } else {
+
+              let localLose: localLoseProps = {
+                date: new Date(),
+                steps: stepsCount,
+                reason: 'cell'
+              }
+
+              localStorage.setItem('@app:loses', JSON.stringify([localLose]));
+
+              if (localHistory) {
+                localHistorySetter({
+                  ...localHistory,
+                  loses: [localLose]
+                })
+              }
+            }
           }
         }
+
+        setPlayer({
+          ...player,
+          position: newPlayerPosition,
+          cell_id: matrix.ids[newPlayerPosition[0]][newPlayerPosition[1]],          
+          lives: player.lives - 1
+        });
       }
 
       setStepsCount(stepsCount + 1);
@@ -224,6 +259,7 @@ export default function Board({ notificationSetter }: BoardProps){
     setPlayer({
       cheeses: -1,
       cell_id: 0,
+      lives: 3,
       position: [0, 0]
     });
 
@@ -283,6 +319,7 @@ export default function Board({ notificationSetter }: BoardProps){
     }
 
     if (player.cell_id === foe.cell_id) {
+
       // Condition to lose by foe!
       setGameOver(true);
       { locale == 'en-US' && 
@@ -301,21 +338,45 @@ export default function Board({ notificationSetter }: BoardProps){
         let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
 
         if (loseHistory) {
-          localStorage.setItem('@app:loses', JSON.stringify(
-            [...loseHistory, {
-              date: new Date(),
-              steps: stepsCount,
-              reason: 'cat'
-            }]
-          ))
+
+          let fiveBestLoses: localLoseProps[] = [...loseHistory, {
+            date: new Date(),
+            steps: stepsCount,
+            reason: 'cell'
+          }].sort((a, b) => b.steps - a.steps).slice(0, 5) as localLoseProps[];
+
+          localStorage.setItem('@app:loses', JSON.stringify(fiveBestLoses));
+
+          if (localHistory) {
+            localHistorySetter({
+              ...localHistory,
+              loses: fiveBestLoses
+            })
+          }
+
         } else {
-          localStorage.setItem('@app:loses', JSON.stringify([{
+
+          let localLose: localLoseProps = {
             date: new Date(),
             steps: stepsCount,
             reason: 'cat'
-          }]));
+          }
+
+          localStorage.setItem('@app:loses', JSON.stringify([localLose]));
+          if (localHistory) {
+            localHistorySetter({
+              ...localHistory,
+              loses: [localLose]
+            })
+          }          
         }
       }
+
+      setPlayer({
+        ...player,
+        lives: 0
+      });
+
     }
 
     if (player.cell_id === exit.cell_id && player.cheeses > 0) {
@@ -337,19 +398,40 @@ export default function Board({ notificationSetter }: BoardProps){
         let winHistory: localWinProps[] = JSON.parse(localStorage.getItem('@app:wins') as string);
 
         if (winHistory) {
-          localStorage.setItem('@app:wins', JSON.stringify(
-            [...winHistory, {
-              date: new Date(),
-              cheeses: player.cheeses,
-              steps: stepsCount
-            }]
-          ))
-        } else {
-          localStorage.setItem('@app:wins', JSON.stringify([{
+
+          let fiveBestWins: localWinProps[] = [...winHistory, {
             date: new Date(),
             cheeses: player.cheeses,
             steps: stepsCount
-          }]));
+          }].sort((a, b) => b.cheeses - a.cheeses)
+            .sort((a, b) => a.steps - b.steps)
+            .slice(0, 5) as localWinProps[];
+
+          localStorage.setItem('@app:wins', JSON.stringify(fiveBestWins))
+
+          if (localHistory) {
+            localHistorySetter({
+              ...localHistory,
+              wins: fiveBestWins
+            })
+          }
+          
+        } else {
+
+          let localWin: localWinProps = {
+            date: new Date(),
+            cheeses: player.cheeses,
+            steps: stepsCount
+          }
+
+          localStorage.setItem('@app:wins', JSON.stringify([localWin]));
+          if (localHistory) {
+            localHistorySetter({
+              ...localHistory,
+              wins: [localWin]
+            })
+          }
+
         }
       }
     }
@@ -364,6 +446,7 @@ export default function Board({ notificationSetter }: BoardProps){
       className={styles.board}
     >
       <div className={styles.statusBar}>
+        <LivesBar lives={player.lives} />
         <p className={inter.className}>{
           player.cheeses > 0
             ? player.cheeses > 1

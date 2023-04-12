@@ -15,7 +15,7 @@
 
 .alive {
   background-color: rgb(var(--cell-alive-rgb));
-  animation: cell-breathing 2s infinite;
+  animation: cell-shining 2s infinite;
 }
 
 .dead {
@@ -24,7 +24,7 @@
 
 .player {
   /* color: rgb(var(--player-rgb)); */
-  animation: player-breathing 2s infinite;
+  animation: player-shining 2s infinite;
 }
 
 .cheese {
@@ -43,7 +43,7 @@
   color: rgb(var(--home-opened-rgb));
 }
 
-@keyframes cell-breathing {
+@keyframes cell-shining {
   0% {
     background-color: red;
   }
@@ -53,7 +53,7 @@
   }
 }
 
-@keyframes player-breathing {
+@keyframes player-shining {
   0% {
     color: rgb(var(--player-rgb));
   }
