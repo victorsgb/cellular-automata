@@ -1,0 +1,68 @@
+.cell {
+  height: 6.0vw;
+  min-height: 1.2rem;
+  max-height: 2.4rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(var(--background-start-rgb));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* padding: 2.0rem; */
+  margin: 2px;
+  border-radius: 8px;
+}
+
+.alive {
+  background-color: rgb(var(--cell-alive-rgb));
+  animation: cell-shining 2s infinite;
+}
+
+.dead {
+  background-color: rgb(var(--cell-dead-rgb));
+}
+
+.player {
+  /* color: rgb(var(--player-rgb)); */
+  animation: player-shining 2s infinite;
+}
+
+.cheese {
+  color: rgb(var(--cheese-rgb));
+}
+
+.foe {
+  color: rgb(var(--foe-rgb));
+}
+
+.homeClosed {
+  color: rgb(var(--home-closed-rgb));
+}
+
+.homeOpen {
+  color: rgb(var(--home-opened-rgb));
+}
+
+@keyframes cell-shining {
+  0% {
+    background-color: red;
+  }
+
+  100% {
+    background-color: rgb(var(--cell-alive-rgb));
+  }
+}
+
+@keyframes player-shining {
+  0% {
+    color: rgb(var(--player-rgb));
+  }
+
+  50% {
+    color: rgb(var(--foreground-rgb));
+  }
+
+  100% {
+    color: rgb(var(--player-rgb));
+  }
+}

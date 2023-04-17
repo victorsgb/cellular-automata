@@ -1,0 +1,35 @@
+.board {
+  border: 2px solid rgb(var(--notify-lose-font-rgb));
+  -webkit-box-shadow: 0 0 1rem 0px var(--board-shadow);
+  -moz-box-shadow: 0 0 1rem 0px var(--board-shadow);
+  box-shadow: 0 0 1rem 0px var(--board-shadow);
+}
+
+.row {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid rgb(var(--background-start-rgb));
+  border-bottom: none;
+  padding: 4px;
+}
+
+.cheeseCount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.restartButtonDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.4rem;
+}

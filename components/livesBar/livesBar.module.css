@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  gap: 4px;
+
+  animation: heart-shining 5s infinite;
+}
+
+@keyframes heart-shining {
+  0% {
+    color: rgb(var(--cell-alive-rgb));
+  }
+
+  40% {
+    color: rgb(var(--cell-alive-rgb));
+  }
+
+  50% {
+    color: rgb(var(--foreground-rgb));
+  }
+
+  60% {
+    color: rgb(var(--cell-alive-rgb));
+  }
+
+  100% {
+    color: rgb(var(--cell-alive-rgb));
+  }
+}

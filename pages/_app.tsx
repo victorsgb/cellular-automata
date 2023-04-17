@@ -1,11 +1,17 @@
-// Type imports
-import { AppProps } from 'next/app';
+// Custom hooks
+import { DataProvider } from '@/hooks/data'
 
-// Styling related imports
-import '../styles/globals.css';
+// Styling related import
+import '@/styles/globals.css'
 
-function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps}/>
+// Type import
+import type { AppProps } from 'next/app'
+
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <DataProvider>
+      <Component {...pageProps} />
+    </DataProvider>
+  );
 }
-
-export default App;

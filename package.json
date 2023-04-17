@@ -1,21 +1,24 @@
 {
+  "name": "cellular-automata",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "date-fns": "^2.29.3",
-    "gray-matter": "^4.0.3",
-    "next": "latest",
+    "@phosphor-icons/react": "^2.0.8",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.31",
+    "@types/react-dom": "18.0.11",
+    "eslint": "8.37.0",
+    "eslint-config-next": "13.2.4",
+    "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "remark": "^14.0.2",
-    "remark-html": "^15.0.2"
-  },
-  "devDependencies": {
-    "@types/react": "18.0.31",
-    "typescript": "5.0.2"
+    "react-icons": "^4.8.0",
+    "typescript": "5.0.3"
   }
 }
