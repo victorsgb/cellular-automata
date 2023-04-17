@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 // Custom components
 import Board from '../components/board';
+import DateDistance from '../components/dateDistance';
 import Dialog from '../components/dialog';
 
 // Styling related import
@@ -26,7 +27,6 @@ interface localThemeProps {
 export interface localLoseProps {
   date: string;
   steps: number;
-  reason: 'cat' | 'cell'
 }
 
 export interface localWinProps {
@@ -142,7 +142,7 @@ export default function Home() {
           <h3 className={inter.className}>Cellular Automaton Game</h3>
         }
         { locale == 'pt-BR' &&  
-          <h3 className={inter.className}>Autômato Celular Game</h3>
+          <h3 lang='pt' className={inter.className}>Jogo do Autômato Celular</h3>
         }
         <button
           className={styles.button}
@@ -190,7 +190,7 @@ export default function Home() {
         }
         { notification !== null && locale == 'pt-BR' &&
           <>
-            <h3 className={`
+            <h3 lang='pt' className={`
               ${inter.className}
               ${styles.notifyType}
               ${ notification.type == 'lose'
@@ -210,7 +210,7 @@ export default function Home() {
                     : ''
               }
             </h3>          
-            <p className={
+            <p lang='pt' className={
               `${inter.className}
               ${ notification.type == 'lose'
                     ? styles.notifyLose
@@ -230,7 +230,7 @@ export default function Home() {
           <p className={`${inter.className} ${styles.inform}`}>press <kbd>⬅️⬆️⬇️➡️</kbd> to move or <kbd>ENTER</kbd> to restart...</p>
         }
         { locale == 'pt-BR' && 
-          <p className={`${inter.className} ${styles.inform}`}>pressione <kbd>⬅️⬆️⬇️➡️</kbd> para se mover ou <kbd>ENTER</kbd> para recomeçar...</p>
+          <p lang='pt' className={`${inter.className} ${styles.inform}`}>pressione <kbd>⬅️⬆️⬇️➡️</kbd> para se mover ou <kbd>ENTER</kbd> para recomeçar...</p>
         }
         <Board
           notificationSetter={setNotification}
@@ -258,32 +258,32 @@ export default function Home() {
               <br/>
               <p className={`${inter.className} ${styles.paragraph}`}>Cells in black/white tones represent dead cells, whereas cells in red tones mean live cells. Keep yourself inside dead cells. If you touch a living cell, your life will be reduced until you eventually lose the game.</p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}><strong>It's up to you to investigate how this cellular automaton evolves so you can safely move along the board!</strong></p>
+              <p className={`${inter.className} ${styles.paragraph}`}><strong>It&apos;s up to you to investigate how this cellular automaton evolves so you can safely move along the board!</strong></p>
               <br/>
               <em className={`${inter.className} ${styles.paragraph}`}><strong>Are you up to the task?</strong></em>
             </>
           }
           { locale == 'pt-BR' && 
             <>
-              <p className={`${inter.className} ${styles.paragraph}`}>Você pode guiar seu avatar (isto é, <GiSeatedMouse className={styles.player} />) de volta à sua <BsHouseCheckFill className={styles.homeOpen} />? Apenas use o teclado para movê-lo pressionando <kbd>⬅️⬆️⬇️➡️</kbd>. Cada tecla pressionada moverá o <GiSeatedMouse className={styles.player} /> em um passo. <strong>Fácil, não?</strong></p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Você pode guiar seu avatar (isto é, <GiSeatedMouse className={styles.player} />) de volta à sua <BsHouseCheckFill className={styles.homeOpen} />? Apenas use o teclado para movê-lo pressionando <kbd>⬅️⬆️⬇️➡️</kbd>. Cada tecla pressionada moverá o <GiSeatedMouse className={styles.player} /> em um passo. <strong>Fácil, não?</strong></p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>Existem algumas desvantagens: você não pode deixar o  <GiCat className={styles.foe} /> te caçar, e você não pode voltar pra casa de mãos vazias: ao menos pegue um <GiCheeseWedge className={styles.cheese} /> durante o percurso! <strong>Ande um pouco até que um pedaço apareça no mapa.</strong></p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Existem algumas desvantagens: você não pode deixar o  <GiCat className={styles.foe} /> te caçar, e você não pode voltar pra casa de mãos vazias: ao menos pegue um <GiCheeseWedge className={styles.cheese} /> durante o percurso! <strong>Ande um pouco até que um pedaço apareça no mapa.</strong></p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>O maior desafio deste jogo não é o <GiCat className={styles.foe} /> nem mesmo procurar e pegar um pedaço de <GiCheeseWedge className={styles.cheese} />, mas é o próprio mapa em si!</p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>O maior desafio deste jogo não é o <GiCat className={styles.foe} /> nem mesmo procurar e pegar um pedaço de <GiCheeseWedge className={styles.cheese} />, mas é o próprio mapa em si!</p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}><strong>O mapa é feito de células que representam um autômato celular.</strong></p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>O mapa é feito de células que representam um autômato celular.</strong></p>
               <details>
-                <summary className={`${inter.className} ${styles.paragraph}`}>
+                <summary lang='pt' className={`${inter.className} ${styles.paragraph}`}>
                   Um autômato celular é...
                 </summary>
-                <p className={`${inter.className} ${styles.paragraph}`}>...um modelo matemático que consiste em uma grade de células que evoluem ao longo do tempo de acordo com um conjunto de regras simples baseadas nos estados das células vizinhas. Cada célula pode ter um número finito de estados, geralmente representados por cores, e as regras definem como as células mudam de uma etapa de tempo para a próxima. Autômatos celulares têm sido usados ​​para modelar uma ampla gama de fenômenos naturais e artificiais, incluindo o comportamento de fluidos, o crescimento de plantas e a disseminação de doenças. </p>
+                <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>...um modelo matemático que consiste em uma grade de células que evoluem ao longo do tempo de acordo com um conjunto de regras simples baseadas nos estados das células vizinhas. Cada célula pode ter um número finito de estados, geralmente representados por cores, e as regras definem como as células mudam de uma etapa de tempo para a próxima. Autômatos celulares têm sido usados ​​para modelar uma ampla gama de fenômenos naturais e artificiais, incluindo o comportamento de fluidos, o crescimento de plantas e a disseminação de doenças. </p>
               </details>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, terá sua vida reduzida, até eventualmente morrer de vez.</p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, terá sua vida reduzida, até eventualmente morrer de vez.</p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}><strong>Cabe a você investigar como esse autômato celular evolui para que você possa se mover com segurança pelo tabuleiro!</strong></p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>Cabe a você investigar como esse autômato celular evolui para que você possa se mover com segurança pelo tabuleiro!</strong></p>
               <br/>
-              <em className={`${inter.className} ${styles.paragraph}`}><strong>Você está pronto para a tarefa?</strong></em>
+              <em lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>Você está pronto para a tarefa?</strong></em>
             </>
           }          
         </article>
@@ -332,6 +332,7 @@ export default function Home() {
           { locale == 'pt-BR' && 
             <div className={`${inter.className} ${styles.configSet}`}>
               <p
+                lang='pt'
                 className={`${inter.className} ${styles.configText}`}>
                   Definir tema
               </p>
@@ -349,6 +350,7 @@ export default function Home() {
                     : true }
                 />
                 <label
+                  lang='pt'
                   htmlFor='theme'
                   className={`${inter.className} ${styles.configText}`}>
                     Claro | Escuro
@@ -404,12 +406,12 @@ export default function Home() {
           </div>                  
           <br/>
           { localHistory?.wins &&
-            <table className={styles.localHistory}>
+            <table className={`${styles.table} ${inter.className}`}>
               { locale == 'en-US' && 
                 <>
                   <caption>Five Best Wins</caption>
                   <thead>
-                    <tr>
+                   <tr className={styles.tr}>
                       <th>Date</th>
                       <th>Cheeses</th>
                       <th>Steps</th>
@@ -419,20 +421,20 @@ export default function Home() {
               }
               { locale == 'pt-BR' && 
                 <>
-                  <caption>Cinco Melhores Vitórias</caption>
-                  <thead>
-                    <tr>
-                      <th>Data</th>
+                  <caption lang='pt'>Cinco Melhores Vitórias</caption>
+                  <thead lang='pt'>
+                    <tr className={styles.tr}>
+                      <th>Quando</th>
                       <th>Queijos</th>
                       <th>Passos</th>
                     </tr>
                   </thead>
                 </>
               }
-              <tbody>
-                {localHistory.wins.map((item: localWinProps) => (
-                    <tr>
-                      <td>{item.date}</td>
+              <tbody lang='pt'>
+                {localHistory.wins.map((item: localWinProps, index) => (
+                    <tr key={index} className={styles.tr}>
+                      <td><DateDistance baseDate={JSON.parse(item.date)} /></td>
                       <td>{item.cheeses}</td>
                       <td>{item.steps}</td>
                     </tr>
@@ -442,42 +444,34 @@ export default function Home() {
           }
           <br/>
           { localHistory?.loses &&
-            <table className={styles.localHistory}>
+            <table className={`${styles.table} ${inter.className}`}>
               { locale == 'en-US' && 
                 <>
                   <caption>Five Best Loses</caption>
                   <thead>
-                    <tr>
-                      <th>Date</th>
+                    <tr className={styles.tr}>
+                      <th>When</th>
                       <th>Steps</th>
-                      <th>Cause of death</th>
                     </tr>
                   </thead>
                 </>
               }
               { locale == 'pt-BR' && 
                 <>
-                  <caption>Cinco Melhores Derrotas</caption>
-                  <thead>
-                    <tr>
-                      <th>Data</th>
+                  <caption lang='pt'>Cinco Melhores Derrotas</caption>
+                  <thead lang='pt'>
+                    <tr className={styles.tr}>
+                      <th>Quando</th>
                       <th>Passos</th>
-                      <th>Causa da morte</th>
                     </tr>
                   </thead>
                 </>
               }
-              <tbody>
-                {localHistory.loses.map((item: localLoseProps) => (
-                    <tr>
-                      <td>{item.date}</td>
+              <tbody lang='pt'>
+                {localHistory.loses.map((item: localLoseProps, index) => (
+                    <tr key={index} className={styles.tr}>
+                      <td><DateDistance baseDate={JSON.parse(item.date)} /></td>
                       <td>{item.steps}</td>
-                      <td>{ locale == 'pt-BR'
-                        ? item.reason == 'cat'
-                          ? 'Gato'
-                          : 'Célula'
-                        : item.reason }
-                      </td>
                     </tr>
                 ))}          
               </tbody>
@@ -494,10 +488,10 @@ export default function Home() {
           }
           { locale == 'pt-BR' && 
             <>
-              <p className={`${inter.className} ${styles.paragraph}`}>Jogo inspirado <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">neste desafio do SigmaGeek</a>.</p>
+              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Jogo inspirado <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">neste desafio do SigmaGeek</a>.</p>
               <br/>
               <br/>
-              <em className={`${inter.className} ${styles.paragraph}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
+              <em lang='pt' className={`${inter.className} ${styles.paragraph}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
             </>
           }          
         </article>
