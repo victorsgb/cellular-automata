@@ -8,7 +8,7 @@
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-end-rgb: 224, 219, 230;
 
   --board-shadow: rgba(0, 0, 0, 0.4);
 
@@ -42,7 +42,7 @@
 
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 14, 19, 20;
-  --background-end-rgb: 0, 0, 0;
+  --background-end-rgb: 24, 29, 30;
 
   --board-shadow: rgba(255, 255, 255, 0.4);
 

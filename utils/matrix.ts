@@ -226,17 +226,17 @@ export default function Matrix() {
   }
 
   function moveFoe(
-    playerPosition: number[],
+    foePosition: number[],
     breakingPoints: string[],
     state: boolean[][],
     position: number[],
     turn: number
   ): {
-    nextPosition: number[] | null, 
+    nextPosition: number[], 
     breakingPoints: string[]
   } {
     let currentMove = decideWhereToMove(
-      playerPosition,
+      foePosition,
       breakingPoints,
       state,
       position,
@@ -277,7 +277,7 @@ export default function Matrix() {
       }
     }
 
-    return {nextPosition: null, breakingPoints};
+    return {nextPosition: foePosition, breakingPoints};
   }
 
   return {

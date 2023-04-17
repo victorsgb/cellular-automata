@@ -49,11 +49,15 @@ interface exitProps {
 
 interface BoardProps {
   notificationSetter: Dispatch<SetStateAction<notificationProps | null>>;
-  localHistory: localHistoryProps | null;
-  localHistorySetter: Dispatch<SetStateAction<localHistoryProps | null>>;
+  localHistory: localHistoryProps;
+  localHistorySetter: Dispatch<SetStateAction<localHistoryProps>>;
 }
 
-export default function Board({ notificationSetter, localHistory, localHistorySetter }: BoardProps){
+export default function Board({
+  notificationSetter,
+  localHistory,
+  localHistorySetter
+}: BoardProps){
 
   const { locale } = useRouter();
 
@@ -144,6 +148,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
 
     if (newPlayerPosition !== null) {
       notificationSetter(null);
+
       // Moving player...
       setPlayer({
         ...player,
@@ -160,7 +165,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
         stepsCount
       );
 
-      if (nextPosition !== null) {
+      if (nextPosition !== foe.position) {
         setFoe({
           ...foe,
           position: nextPosition,
@@ -174,6 +179,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
 
       let matrixValuesUpdated = mx.updateMatrix(matrix.values);
 
+      // Condition to lose a life OR to lose game by touching foe
       if (matrixValuesUpdated[newPlayerPosition[0]][newPlayerPosition[1]]) {
 
         if (player.lives - 1 == 0) {
@@ -199,10 +205,11 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
             if (loseHistory) {
 
               let fiveBestLoses: localLoseProps[] = [...loseHistory, {
-                date: new Date(),
-                steps: stepsCount,
-                reason: 'cell'
-              }].sort((a, b) => b.steps - a.steps).slice(0, 5) as localLoseProps[];
+                date: JSON.stringify(new Date()),
+                steps: stepsCount
+              }]
+                .sort((a, b) => b.steps - a.steps)
+                .slice(0, 5) as localLoseProps[];
 
               localStorage.setItem('@app:loses', JSON.stringify(fiveBestLoses))
 
@@ -215,10 +222,11 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
 
             } else {
 
+
+
               let localLose: localLoseProps = {
-                date: new Date(),
-                steps: stepsCount,
-                reason: 'cell'
+                date: JSON.stringify(new Date()),
+                steps: stepsCount
               }
 
               localStorage.setItem('@app:loses', JSON.stringify([localLose]));
@@ -239,6 +247,67 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
           cell_id: matrix.ids[newPlayerPosition[0]][newPlayerPosition[1]],          
           lives: player.lives - 1
         });
+      } else if (newPlayerPosition[0] === nextPosition[0] && newPlayerPosition[1] === nextPosition[1]) {
+
+        // Condition to lose by foe!
+        setGameOver(true);
+        { locale == 'en-US' && 
+          notificationSetter({
+            type: 'lose',
+            message: 'Oh no... You got eaten by the cat!'
+          });
+        }
+        { locale == 'pt-BR' && 
+          notificationSetter({
+            type: 'lose',
+            message: 'Oh, não... Você foi engolido pelo gato!'
+          });
+        }
+        if (localStorage) {
+          let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
+
+          if (loseHistory) {
+
+            let fiveBestLoses: localLoseProps[] = [...loseHistory, {
+              date: JSON.stringify(new Date()),
+              steps: stepsCount            
+            }]
+              .sort((a, b) => b.steps - a.steps)
+              .slice(0, 5) as localLoseProps[];
+
+            localStorage.setItem('@app:loses', JSON.stringify(fiveBestLoses));
+
+            if (localHistory) {
+              localHistorySetter({
+                ...localHistory,
+                loses: fiveBestLoses
+              })
+            }
+
+          } else {
+
+            let localLose: localLoseProps = {
+              date: JSON.stringify(new Date()),
+              steps: stepsCount
+            }
+
+            localStorage.setItem('@app:loses', JSON.stringify([localLose]));
+            if (localHistory) {
+              localHistorySetter({
+                ...localHistory,
+                loses: [localLose]
+              })
+            }          
+          }
+        }
+
+        setPlayer({
+          ...player,
+          lives: 0,
+          position: newPlayerPosition,
+          cell_id: matrix.ids[newPlayerPosition[0]][newPlayerPosition[1]]          
+        });      
+        
       }
 
       setStepsCount(stepsCount + 1);
@@ -297,7 +366,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
       spawnCheese();
     }
 
-  }, [stepsCount]);
+  }, [stepsCount, spawnCheese]);
 
   useEffect(() => {
 
@@ -318,68 +387,11 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
       });
     }
 
-    if (player.cell_id === foe.cell_id) {
-
-      // Condition to lose by foe!
-      setGameOver(true);
-      { locale == 'en-US' && 
-        notificationSetter({
-          type: 'lose',
-          message: 'Oh no... You got eaten by the cat!'
-        });
-      }
-      { locale == 'pt-BR' && 
-        notificationSetter({
-          type: 'lose',
-          message: 'Oh, não... Você foi engolido pelo gato!'
-        });
-      }
-      if (localStorage) {
-        let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
-
-        if (loseHistory) {
-
-          let fiveBestLoses: localLoseProps[] = [...loseHistory, {
-            date: new Date(),
-            steps: stepsCount,
-            reason: 'cell'
-          }].sort((a, b) => b.steps - a.steps).slice(0, 5) as localLoseProps[];
-
-          localStorage.setItem('@app:loses', JSON.stringify(fiveBestLoses));
-
-          if (localHistory) {
-            localHistorySetter({
-              ...localHistory,
-              loses: fiveBestLoses
-            })
-          }
-
-        } else {
-
-          let localLose: localLoseProps = {
-            date: new Date(),
-            steps: stepsCount,
-            reason: 'cat'
-          }
-
-          localStorage.setItem('@app:loses', JSON.stringify([localLose]));
-          if (localHistory) {
-            localHistorySetter({
-              ...localHistory,
-              loses: [localLose]
-            })
-          }          
-        }
-      }
-
-      setPlayer({
-        ...player,
-        lives: 0
-      });
-
-    }
-
-    if (player.cell_id === exit.cell_id && player.cheeses > 0) {
+    if ( 
+        player.cell_id === exit.cell_id
+        && player.cheeses > 0
+        && player.lives > 0
+      ) {
       // Condition to win the game!
       setGameOver(true);
       { locale == 'en-US' && 
@@ -400,7 +412,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
         if (winHistory) {
 
           let fiveBestWins: localWinProps[] = [...winHistory, {
-            date: new Date(),
+            date: JSON.stringify(new Date()),
             cheeses: player.cheeses,
             steps: stepsCount
           }].sort((a, b) => b.cheeses - a.cheeses)
@@ -419,7 +431,7 @@ export default function Board({ notificationSetter, localHistory, localHistorySe
         } else {
 
           let localWin: localWinProps = {
-            date: new Date(),
+            date: JSON.stringify(new Date()),
             cheeses: player.cheeses,
             steps: stepsCount
           }
