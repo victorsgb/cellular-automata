@@ -1,11 +1,12 @@
 // Core dependencies
-import { Inter } from 'next/font/google';
+import { Roboto_Mono, Lora } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 // Custom components
 import Board from '../components/board';
+import ControlPad from '../components/controlPad';
 import DateDistance from '../components/dateDistance';
 import Dialog from '../components/dialog';
 
@@ -40,7 +41,11 @@ export interface localHistoryProps {
   loses: localLoseProps[] | null;
 }
 
-const inter = Inter({ subsets: ['latin'] })
+export type buttonValues = 'U' | 'D' | 'L' | 'R' | null;
+
+const roboto_mono = Roboto_Mono({ subsets: ['latin'] });
+const lora = Lora({ subsets: ['latin'] })
+
 
 export default function Home() {
 
@@ -52,6 +57,8 @@ export default function Home() {
   const [localTheme, setLocalTheme] = useState<localThemeProps | null>(null);
 
   const [localHistory, setLocalHistory] = useState<localHistoryProps>({wins: null, loses: null});
+
+  const [buttonClickValue, setButtonClickValue] = useState<buttonValues>(null);
 
   function handleShowDoubtModal() {
     const dialog = document.querySelector(`dialog#doubt`) as HTMLDialogElement;
@@ -76,6 +83,20 @@ export default function Home() {
 
   function changeLanguage(language: 'en-US' | 'pt-BR') {   
     router.replace(asPath, undefined, {locale: language});  
+  }
+
+  function eraseLocalHistory() {
+    if (localHistory) {
+      setLocalHistory({
+        wins: null,
+        loses: null
+      });
+    }
+
+    if (localStorage) {
+      localStorage.removeItem('@app:wins');
+      localStorage.removeItem('@app:loses');
+    }
   }
 
   useEffect(() => {
@@ -139,10 +160,10 @@ export default function Home() {
           <GoQuestion size={25} className={styles.icon} />
         </button>
         { locale == 'en-US' &&  
-          <h3 className={inter.className}>Cellular Automaton Game</h3>
+          <h3 className={roboto_mono.className}>Cellular Automaton Game</h3>
         }
         { locale == 'pt-BR' &&  
-          <h3 lang='pt' className={inter.className}>Jogo do Autômato Celular</h3>
+          <h3 lang='pt' className={roboto_mono.className}>Jogo do Autômato Celular</h3>
         }
         <button
           className={styles.button}
@@ -155,7 +176,7 @@ export default function Home() {
         { notification !== null && locale == 'en-US' &&
           <>
             <h3 className={`
-              ${inter.className}
+              ${roboto_mono.className}
               ${styles.notifyType}
               ${ notification.type == 'lose'
               ? styles.notifyTypeLose
@@ -175,7 +196,7 @@ export default function Home() {
               }
             </h3>          
             <p className={
-              `${inter.className}
+              `${roboto_mono.className}
               ${ notification.type == 'lose'
                     ? styles.notifyLose
                     : notification.type == 'alert'
@@ -191,7 +212,7 @@ export default function Home() {
         { notification !== null && locale == 'pt-BR' &&
           <>
             <h3 lang='pt' className={`
-              ${inter.className}
+              ${roboto_mono.className}
               ${styles.notifyType}
               ${ notification.type == 'lose'
               ? styles.notifyTypeLose
@@ -211,7 +232,7 @@ export default function Home() {
               }
             </h3>          
             <p lang='pt' className={
-              `${inter.className}
+              `${roboto_mono.className}
               ${ notification.type == 'lose'
                     ? styles.notifyLose
                     : notification.type == 'alert'
@@ -227,63 +248,92 @@ export default function Home() {
       </section>
       <main className={styles.main}>
         { locale == 'en-US' && 
-          <p className={`${inter.className} ${styles.inform}`}>press <kbd>⬅️⬆️⬇️➡️</kbd> to move or <kbd>ENTER</kbd> to restart...</p>
+          <p className={`${roboto_mono.className} ${styles.inform}`}>click on one of the buttons in the lower left corner or press <kbd>⬅️⬆️⬇️➡️</kbd> to move or <kbd>ENTER</kbd> to restart...</p>
         }
         { locale == 'pt-BR' && 
-          <p lang='pt' className={`${inter.className} ${styles.inform}`}>pressione <kbd>⬅️⬆️⬇️➡️</kbd> para se mover ou <kbd>ENTER</kbd> para recomeçar...</p>
+          <>
+            <p lang='pt' className={`${roboto_mono.className} ${styles.inform}`}>clique em um dos botões no canto inferior esquerdo ou pressione <kbd>⬅️⬆️⬇️➡️</kbd> para se mover ou <kbd>ENTER</kbd> para recomeçar...</p>
+          </>
         }
         <Board
           notificationSetter={setNotification}
           localHistory={localHistory}
           localHistorySetter={setLocalHistory}
+          buttonValue={buttonClickValue}
+          buttonValueSetter={setButtonClickValue}
         />
       </main>
       <Dialog name='doubt'>
         <article>
           { locale == 'en-US' && 
             <>
-              <p className={`${inter.className} ${styles.paragraph}`}>Can you lead your avatar (i.e., <GiSeatedMouse className={styles.player} />) back into the <BsHouseCheckFill className={styles.homeOpen} />? Just use a keyboard to move it by pressing <kbd>⬅️⬆️⬇️➡️</kbd>. Each press in one of these buttons will move the <GiSeatedMouse className={styles.player} /> one step. <strong>Easy, right?</strong></p>
+              <section className={styles.section}>
+                <p className={`${roboto_mono.className} ${styles.paragraph}`}>Can you lead your avatar (i.e., <GiSeatedMouse className={styles.player} />) back home (<BsHouseCheckFill className={styles.homeOpen} />)? Just use a keyboard to move it by pressing <kbd>⬅️⬆️⬇️➡️</kbd>. Each press in one of these buttons will move the <GiSeatedMouse className={styles.player} /> one step. <strong>Easy, right?</strong></p>
+                <img className={styles.img} src="/section-1.png" alt="" />
+              </section>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>There are a few drawbacks: you cannot let the <GiCat className={styles.foe} /> hunt you down, and you cannot get back home empty-handed: at least get a <GiCheeseWedge className={styles.cheese} /> along the way! <strong>Walk a little bit till one shows up on the map.</strong></p>
+              <section className={styles.section}>
+                <img className={styles.img} src="/section-2.png" alt="" />
+                <p className={`${roboto_mono.className} ${styles.paragraph}`}>There are a few drawbacks: you cannot let the cat (<GiCat className={styles.foe} />) hunt you down, and you cannot get back home empty-handed: at least get a piece of cheese (<GiCheeseWedge className={styles.cheese} />) along the way! <strong>Walk a little bit till one shows up on the map.</strong></p>
+              </section>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>The major challenge of this game is not the <GiCat className={styles.foe} /> nor finding and catching a <GiCheeseWedge className={styles.cheese} />, but it is the map itself!</p>
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>The major challenge of this game is not the cat (<GiCat className={styles.foe} />) nor finding and catching a piece of cheese(<GiCheeseWedge className={styles.cheese} />), but it is the map itself!</p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}><strong>The map is made of cells that represent a cellular automaton.</strong></p>
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}><strong>The map is made of cells that represent a cellular automaton.</strong></p>
+              <br />
               <details>
-                <summary className={`${inter.className} ${styles.paragraph}`}>
+                <summary className={`${roboto_mono.className} ${styles.paragraph} ${styles.anchor}`}>
                   A cellular automaton is...
                 </summary>
-                <p className={`${inter.className} ${styles.paragraph}`}>...a mathematical model consisting of a grid of cells that evolve over time according to a set of simple rules based on the states of neighboring cells. Each cell can have a finite number of states, typically represented by colors, and the rules define how the cells change from one time step to the next. Cellular automata have been used to model a wide range of natural and artificial phenomena, including the behavior of fluids, the growth of plants, and the spread of disease.</p>
+                <section>
+                  <p className={`${roboto_mono.className} ${styles.paragraph}`}>...a mathematical model consisting of a grid of cells that evolve over time according to a set of simple rules based on the states of neighboring cells. Each cell can have a finite number of states, typically represented by colors, and the rules define how the cells change from one time step to the next. Cellular automata have been used to model a wide range of natural and artificial phenomena, including the behavior of fluids, the growth of plants, and the spread of disease.</p>
+                  <br />
+                  <p className={`${roboto_mono.className} ${styles.paragraph}`}>You can learn more about cellular automata, <a className={styles.anchor} href="https://jeremykun.com/2011/06/29/conways-game-of-life/" target='_blank'>on this link.</a></p>
+                </section>
               </details>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}>Cells in black/white tones represent dead cells, whereas cells in red tones mean live cells. Keep yourself inside dead cells. If you touch a living cell, your life will be reduced until you eventually lose the game.</p>
+              <section className={styles.section}>
+                <p className={`${roboto_mono.className} ${styles.paragraph}`}>Cells in black/white tones represent dead cells, whereas cells in red tones mean live cells. Keep yourself inside dead cells. If you touch a living cell, your life will be reduced until you eventually lose the game.</p>
+                <br/>
+                <img className={styles.img} src="/section-3.png" alt="" />
+              </section>
+              <br />
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}><strong>It&apos;s up to you to investigate how this cellular automaton evolves so you can safely move along the board!</strong></p>
               <br/>
-              <p className={`${inter.className} ${styles.paragraph}`}><strong>It&apos;s up to you to investigate how this cellular automaton evolves so you can safely move along the board!</strong></p>
-              <br/>
-              <em className={`${inter.className} ${styles.paragraph}`}><strong>Are you up to the task?</strong></em>
+              <em className={`${roboto_mono.className} ${styles.paragraph}`}><strong>Are you up to the task?</strong></em>
             </>
           }
           { locale == 'pt-BR' && 
             <>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Você pode guiar seu avatar (isto é, <GiSeatedMouse className={styles.player} />) de volta à sua <BsHouseCheckFill className={styles.homeOpen} />? Apenas use o teclado para movê-lo pressionando <kbd>⬅️⬆️⬇️➡️</kbd>. Cada tecla pressionada moverá o <GiSeatedMouse className={styles.player} /> em um passo. <strong>Fácil, não?</strong></p>
+              <section className={styles.section}>
+                <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Você pode guiar seu avatar (isto é, <GiSeatedMouse className={styles.player} />) de volta à sua casa (<BsHouseCheckFill className={styles.homeOpen} />)? Apenas use o teclado para movê-lo pressionando <kbd>⬅️⬆️⬇️➡️</kbd>. Cada tecla pressionada moverá o <GiSeatedMouse className={styles.player} /> em um passo. <strong>Fácil, não?</strong></p>
+                <img className={styles.img} src="/section-1.png" alt="" />
+              </section>
               <br/>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Existem algumas desvantagens: você não pode deixar o  <GiCat className={styles.foe} /> te caçar, e você não pode voltar pra casa de mãos vazias: ao menos pegue um <GiCheeseWedge className={styles.cheese} /> durante o percurso! <strong>Ande um pouco até que um pedaço apareça no mapa.</strong></p>
+              <section className={styles.section}>
+                <img className={styles.img} src="/section-2.png" alt="" />
+                <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Existem algumas desvantagens: você não pode deixar o gato (<GiCat className={styles.foe} />) te caçar, e você não pode voltar pra casa de mãos vazias: ao menos pegue um pedaço de queijo (<GiCheeseWedge className={styles.cheese} />) durante o percurso! <strong>Ande um pouco até que um pedaço apareça no mapa.</strong></p>
+              </section>
               <br/>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>O maior desafio deste jogo não é o <GiCat className={styles.foe} /> nem mesmo procurar e pegar um pedaço de <GiCheeseWedge className={styles.cheese} />, mas é o próprio mapa em si!</p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>O maior desafio deste jogo não é o gato (<GiCat className={styles.foe} />) nem mesmo procurar e pegar um pedaço de queijo (<GiCheeseWedge className={styles.cheese} />), mas é o próprio mapa em si!</p>
               <br/>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>O mapa é feito de células que representam um autômato celular.</strong></p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}><strong>O mapa é feito de células que representam um autômato celular.</strong></p>
+              <br />
               <details>
-                <summary lang='pt' className={`${inter.className} ${styles.paragraph}`}>
+                <summary lang='pt' className={`${roboto_mono.className} ${styles.paragraph} ${styles.anchor}`}>
                   Um autômato celular é...
                 </summary>
-                <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>...um modelo matemático que consiste em uma grade de células que evoluem ao longo do tempo de acordo com um conjunto de regras simples baseadas nos estados das células vizinhas. Cada célula pode ter um número finito de estados, geralmente representados por cores, e as regras definem como as células mudam de uma etapa de tempo para a próxima. Autômatos celulares têm sido usados ​​para modelar uma ampla gama de fenômenos naturais e artificiais, incluindo o comportamento de fluidos, o crescimento de plantas e a disseminação de doenças. </p>
+                <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>...um modelo matemático que consiste em uma grade de células que evoluem ao longo do tempo de acordo com um conjunto de regras simples baseadas nos estados das células vizinhas. Cada célula pode ter um número finito de estados, geralmente representados por cores, e as regras definem como as células mudam de uma etapa de tempo para a próxima. Autômatos celulares têm sido usados ​​para modelar uma ampla gama de fenômenos naturais e artificiais, incluindo o comportamento de fluidos, o crescimento de plantas e a disseminação de doenças. </p>
               </details>
               <br/>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, terá sua vida reduzida, até eventualmente morrer de vez.</p>
+              <section className={styles.section}>
+                <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Células em tons de branco/preto representam células mortas, enquanto que células em tons de vermelho representam células vivas. Mantenha a si mesmo dentro de células mortas. Se você tocar uma célula viva, terá sua vida reduzida, até eventualmente morrer de vez.</p>
+                <img className={styles.img} src="/section-3.png" alt="" />
+              </section>
               <br/>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>Cabe a você investigar como esse autômato celular evolui para que você possa se mover com segurança pelo tabuleiro!</strong></p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}><strong>Cabe a você investigar como esse autômato celular evolui para que você possa se mover com segurança pelo tabuleiro!</strong></p>
               <br/>
-              <em lang='pt' className={`${inter.className} ${styles.paragraph}`}><strong>Você está pronto para a tarefa?</strong></em>
+              <em lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}><strong>Você está pronto para a tarefa?</strong></em>
             </>
           }          
         </article>
@@ -291,9 +341,9 @@ export default function Home() {
       <Dialog name='config'>
         <article>
           { locale == 'en-US' && 
-            <div className={`${inter.className} ${styles.configSet}`}>
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
               <p
-                className={`${inter.className} ${styles.configText}`}>
+                className={`${roboto_mono.className} ${styles.configText}`}>
                   Set theme
               </p>
               <div className={styles.configSet}>
@@ -311,7 +361,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='theme'
-                  className={`${inter.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configText}`}>
                     Light | Dark
                 </label>
                 <input
@@ -330,10 +380,10 @@ export default function Home() {
             </div>
           }
           { locale == 'pt-BR' && 
-            <div className={`${inter.className} ${styles.configSet}`}>
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
               <p
                 lang='pt'
-                className={`${inter.className} ${styles.configText}`}>
+                className={`${roboto_mono.className} ${styles.configText}`}>
                   Definir tema
               </p>
               <div className={styles.configSet}>
@@ -352,7 +402,7 @@ export default function Home() {
                 <label
                   lang='pt'
                   htmlFor='theme'
-                  className={`${inter.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configText}`}>
                     Claro | Escuro
                 </label>
                 <input
@@ -371,9 +421,9 @@ export default function Home() {
             </div>
           }
           <br/>
-          <div className={`${inter.className} ${styles.configSet}`}>
+          <div className={`${roboto_mono.className} ${styles.configSet}`}>
             <p
-              className={`${inter.className} ${styles.configText}`}>
+              className={`${roboto_mono.className} ${styles.configText}`}>
                 {`${locale == 'pt-BR' ? 'Definir idioma' : 'Set language'}`}
             </p>
             <div className={styles.configSet}>
@@ -389,7 +439,7 @@ export default function Home() {
               />
               <label
                 htmlFor='theme'
-                className={`${inter.className} ${styles.configText}`}>
+                className={`${roboto_mono.className} ${styles.configText}`}>
                   English | Português
               </label>
               <input
@@ -406,7 +456,7 @@ export default function Home() {
           </div>                  
           <br/>
           { localHistory?.wins &&
-            <table className={`${styles.table} ${inter.className}`}>
+            <table className={`${styles.table} ${roboto_mono.className}`}>
               { locale == 'en-US' && 
                 <>
                   <caption>Five Best Wins</caption>
@@ -431,7 +481,7 @@ export default function Home() {
                   </thead>
                 </>
               }
-              <tbody lang='pt'>
+              <tbody>
                 {localHistory.wins.map((item: localWinProps, index) => (
                     <tr key={index} className={styles.tr}>
                       <td><DateDistance baseDate={JSON.parse(item.date)} /></td>
@@ -444,7 +494,7 @@ export default function Home() {
           }
           <br/>
           { localHistory?.loses &&
-            <table className={`${styles.table} ${inter.className}`}>
+            <table className={`${styles.table} ${roboto_mono.className}`}>
               { locale == 'en-US' && 
                 <>
                   <caption>Five Best Loses</caption>
@@ -467,7 +517,7 @@ export default function Home() {
                   </thead>
                 </>
               }
-              <tbody lang='pt'>
+              <tbody>
                 {localHistory.loses.map((item: localLoseProps, index) => (
                     <tr key={index} className={styles.tr}>
                       <td><DateDistance baseDate={JSON.parse(item.date)} /></td>
@@ -480,22 +530,23 @@ export default function Home() {
           <br/>
           { locale == 'en-US' && 
             <>
-              <p className={`${inter.className} ${styles.paragraph}`}>Game inspired <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">by this SigmaGeek challenge</a>.</p>
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>Game inspired <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">by this SigmaGeek challenge</a>.</p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>We do not perform data collection. The results displayed here are stored in your own browser and you can delete them permanently at any time <button onClick={eraseLocalHistory} className={`${styles.eraseButton} ${roboto_mono.className}`}>by clicking here</button>.</p>
               <br/>
-              <br/>
-              <em className={`${inter.className} ${styles.paragraph}`}>Developed with <BsFillSuitHeartFill /> by <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
+              <em className={`${roboto_mono.className} ${styles.author}`}>Developed with <BsFillSuitHeartFill /> by <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
             </>
           }
           { locale == 'pt-BR' && 
             <>
-              <p lang='pt' className={`${inter.className} ${styles.paragraph}`}>Jogo inspirado <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">neste desafio do SigmaGeek</a>.</p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Jogo inspirado <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">neste desafio do SigmaGeek</a>.</p>
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Não fazemos nenhum tipo de coleta de dados. Os resultados aqui exibidos estão sendo salvos no seu próprio navegador e você apagá-los permanentemente sempre que desejar <button onClick={eraseLocalHistory} className={`${styles.eraseButton} ${roboto_mono.className}`}>clicando aqui</button>.</p>
               <br/>
-              <br/>
-              <em lang='pt' className={`${inter.className} ${styles.paragraph}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
+              <em lang='pt' className={`${roboto_mono.className} ${styles.author}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
             </>
           }          
         </article>
-      </Dialog>      
+      </Dialog>
+      <ControlPad buttonValueSetter={setButtonClickValue} />      
     </>
   )
 }
