@@ -1,6 +1,6 @@
 // Core dependencies
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Inter } from 'next/font/google';
+import { Roboto_Mono } from 'next/font/google';
 import { useRouter } from 'next/router';
 
 // Custom components
@@ -19,10 +19,10 @@ import styles from './board.module.css';
 import { GiCheeseWedge } from 'react-icons/gi';
 
 // Type imports
-import { localHistoryProps, localLoseProps, localWinProps, notificationProps } from '../../pages';
+import { buttonValues, localHistoryProps, localLoseProps, localWinProps, notificationProps } from '../../pages';
 
 
-const inter = Inter({ subsets: ['latin'] })
+const roboto_mono = Roboto_Mono({ subsets: ['latin'] })
 
 interface cheeseProps {
   visible: boolean;
@@ -51,12 +51,16 @@ interface BoardProps {
   notificationSetter: Dispatch<SetStateAction<notificationProps | null>>;
   localHistory: localHistoryProps;
   localHistorySetter: Dispatch<SetStateAction<localHistoryProps>>;
+  buttonValue: buttonValues;
+  buttonValueSetter: Dispatch<SetStateAction<buttonValues>>;
 }
 
 export default function Board({
   notificationSetter,
   localHistory,
-  localHistorySetter
+  localHistorySetter,
+  buttonValue,
+  buttonValueSetter
 }: BoardProps){
 
   const { locale } = useRouter();
@@ -146,6 +150,12 @@ export default function Board({
     // Cancel the default action to avoid it being handled twice
     event.preventDefault();
 
+    handleConsequencesOfNewPlayerPosition(newPlayerPosition)
+
+  }
+
+  function handleConsequencesOfNewPlayerPosition(newPlayerPosition: number[] | null) {
+
     if (newPlayerPosition !== null) {
       notificationSetter(null);
 
@@ -221,8 +231,6 @@ export default function Board({
               }
 
             } else {
-
-
 
               let localLose: localLoseProps = {
                 date: JSON.stringify(new Date()),
@@ -312,6 +320,7 @@ export default function Board({
 
       setStepsCount(stepsCount + 1);
     }
+
   }
 
   function spawnCheese() {
@@ -355,6 +364,20 @@ export default function Board({
     }
 
   }
+
+  useEffect(() => {
+
+    if (buttonValue !== null && !gameOver) {
+      
+      let newPlayerPosition = mx.movePlayer(matrix.values, player.position, buttonValue);
+
+      handleConsequencesOfNewPlayerPosition(newPlayerPosition);
+
+      buttonValueSetter(null);
+
+    }
+
+  }, [buttonValue, gameOver, mx.movePlayer, matrix.values, player.position, handleConsequencesOfNewPlayerPosition, buttonValueSetter]);
 
   useEffect(() => {
 
@@ -448,7 +471,19 @@ export default function Board({
       }
     }
 
-  }, [player.cell_id])
+  }, [player.cell_id]);
+
+  useEffect(() => {
+
+    if (gameOver) {
+
+      let buttonElement: HTMLButtonElement = document.getElementById('restartButton') as HTMLButtonElement;
+
+      buttonElement.focus();
+    }
+
+
+  }, [gameOver]);
 
   return (
     <div 
@@ -459,7 +494,7 @@ export default function Board({
     >
       <div className={styles.statusBar}>
         <LivesBar lives={player.lives} />
-        <p className={inter.className}>{
+        <p className={roboto_mono.className}>{
           player.cheeses > 0
             ? player.cheeses > 1
               ? <div className={styles.cheeseCount}><GiCheeseWedge /><strong> x {player.cheeses}</strong></div>
@@ -467,10 +502,10 @@ export default function Board({
             : ''
         }</p>
         { locale == 'en-US' && 
-          <p className={inter.className}>{`${stepsCount > 0 ? stepsCount : 'No'} step${stepsCount > 1  ? 's' : ''}`}</p>
+          <p className={roboto_mono.className}>{`${stepsCount > 0 ? stepsCount : 'No'} step${stepsCount > 1  ? 's' : ''}`}</p>
         }
         { locale == 'pt-BR' && 
-          <p className={inter.className}>{`${stepsCount > 0 ? stepsCount : 'Nenhum'} passo${stepsCount > 1  ? 's' : ''}`}</p>
+          <p className={roboto_mono.className}>{`${stepsCount > 0 ? stepsCount : 'Nenhum'} passo${stepsCount > 1  ? 's' : ''}`}</p>
         }
       </div>
       { matrix.ids[0].map((_row, index_row) => (
@@ -489,13 +524,23 @@ export default function Board({
         </div>
       )) }
       <div className={styles.restartButtonDiv}>
-        { gameOver && locale == 'en-US'&&
-          <button autoFocus onClick={handleRestart}>
+        { locale == 'en-US'&&
+          <button
+            id='restartButton'
+            title='Button to restart the game'
+            className={`${styles.restartButton} ${roboto_mono.className}`}
+            onClick={handleRestart}
+          >
             Restart!
           </button>
         }
-        { gameOver && locale == 'pt-BR'&&
-          <button autoFocus onClick={handleRestart}>
+        { locale == 'pt-BR'&&
+          <button
+            id='restartButton'
+            title='Botão para reiniciar o jogo'
+            className={`${styles.restartButton} ${roboto_mono.className}`}
+            onClick={handleRestart}
+          >
             Recomeçar!
           </button>
         }
