@@ -47,3 +47,9 @@
 .restartButton:active {
   background-color: rgb(var(--notify-alert-font-rgb));
 }
+
+.restartButton:disabled {
+  background-color: rgb(var(--background-end-rgb));
+  color: gray;
+  /* text-decoration: line-through; */
+}

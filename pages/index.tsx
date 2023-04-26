@@ -14,7 +14,7 @@ import Dialog from '../components/dialog';
 import styles from '../styles/Home.module.css'
 import { BsFillSuitHeartFill, BsHouseCheckFill } from 'react-icons/bs';
 import { GiCat, GiCheeseWedge, GiSeatedMouse } from 'react-icons/gi';
-import { GoGear, GoQuestion } from 'react-icons/go';
+import { GoGear, GoInfo, GoQuestion } from 'react-icons/go';
 
 export interface notificationProps {
   type: 'win' | 'lose' | 'alert'
@@ -41,6 +41,11 @@ export interface localHistoryProps {
   loses: localLoseProps[] | null;
 }
 
+export interface localAudioProps {
+  active: boolean;
+  volume: number;
+}
+
 export type buttonValues = 'U' | 'D' | 'L' | 'R' | null;
 
 const roboto_mono = Roboto_Mono({ subsets: ['latin'] });
@@ -52,11 +57,17 @@ export default function Home() {
   const router = useRouter();
   const { locale, asPath } = useRouter();
 
+  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null >(null);
+
   const [notification, setNotification] = useState<notificationProps | null>(null);
 
   const [localTheme, setLocalTheme] = useState<localThemeProps | null>(null);
 
   const [localHistory, setLocalHistory] = useState<localHistoryProps>({wins: null, loses: null});
+
+  const [localMusic, setLocalMusic] = useState<localAudioProps>({ active: true, volume: 1.0});
+
+  const [localSound, setLocalSound] = useState<localAudioProps>({ active: true, volume: 1.0});
 
   const [buttonClickValue, setButtonClickValue] = useState<buttonValues>(null);
 
@@ -68,6 +79,11 @@ export default function Home() {
   function handleShowConfigModal() {
     const dialog = document.querySelector(`dialog#config`) as HTMLDialogElement;
     dialog?.showModal();
+  }
+
+  function handleShowCreditsModal() {
+    const dialog = document.querySelector(`dialog#credits`) as HTMLDialogElement;
+    dialog?.showModal();    
   }
 
   function storeChosenTheme(theme: 'light' | 'dark') {
@@ -83,6 +99,75 @@ export default function Home() {
 
   function changeLanguage(language: 'en-US' | 'pt-BR') {   
     router.replace(asPath, undefined, {locale: language});  
+  }
+
+  function storeMusicActivation(active: boolean) {
+
+    if (localStorage) {
+      localStorage.setItem('@app:music', JSON.stringify({
+        active: active,
+        volume: localMusic.volume
+      }));
+      setLocalMusic({
+        ...localMusic,
+        active
+      });
+
+      if (backgroundMusic) {
+        if (!localMusic.active) {
+          backgroundMusic.play();
+        } else {
+          backgroundMusic.pause();
+        } 
+      }
+    }
+  }
+
+  function storeSoundActivation(active: boolean) {
+
+    if (localStorage) {
+      localStorage.setItem('@app:sound', JSON.stringify({
+        active: active,
+        volume: localSound.volume
+      }));
+      setLocalSound({
+        ...localSound,
+        active
+      });
+    }
+  }
+
+  function storeAudioVolume(event: any) {
+
+    event.preventDefault();
+
+    if (localStorage) {
+      localStorage.setItem('@app:music', JSON.stringify({
+        active: localMusic.active,
+        volume: event.target.value
+      }));
+
+      setLocalMusic({
+        ...localMusic,
+        volume: event.target.value
+      });
+
+      localStorage.setItem('@app:sound', JSON.stringify({
+        active: localSound.active,
+        volume: event.target.value
+      }));
+
+      setLocalSound({
+        ...localSound,
+        volume: event.target.value
+      });
+
+      if (backgroundMusic) {      
+        backgroundMusic.volume = event.target.value;
+      }
+    }
+
+
   }
 
   function eraseLocalHistory() {
@@ -144,6 +229,32 @@ export default function Home() {
 
   }, [localTheme?.theme]);
 
+  useEffect(() => {
+
+    if (localStorage.getItem('@app:music')) {
+      let localMusic = JSON.parse(localStorage.getItem('@app:music') as string);
+
+      setLocalMusic({
+        active: localMusic.active,
+        volume: localMusic.volume
+      })
+    }
+
+  }, [localMusic?.active, localMusic?.volume]);
+
+  useEffect(() => {
+
+    if (localStorage.getItem('@app:sound')) {
+      let localSound = JSON.parse(localStorage.getItem('@app:sound') as string);
+
+      setLocalSound({
+        active: localSound.active,
+        volume: localSound.volume
+      })
+    }
+
+  }, [localSound?.active, localSound?.volume]);
+
   return (
     <>
       <Head>
@@ -157,6 +268,12 @@ export default function Home() {
           className={styles.button}
           onClick={handleShowDoubtModal}  
         >
+          { locale == 'en-US' &&
+            <span className={`${styles.buttonText} ${roboto_mono.className}`}>Objective</span>
+          }
+          { locale == 'pt-BR' &&
+            <span lang='pt' className={`${styles.buttonText} ${roboto_mono.className}`}>Objetivo</span>
+          }          
           <GoQuestion size={25} className={styles.icon} />
         </button>
         { locale == 'en-US' &&  
@@ -169,7 +286,25 @@ export default function Home() {
           className={styles.button}
           onClick={handleShowConfigModal}  
         >
+          { locale == 'en-US' &&
+            <span className={`${styles.buttonText} ${roboto_mono.className}`}>Config</span>
+          }
+          { locale == 'pt-BR' &&
+            <span lang='pt' className={`${styles.buttonText} ${roboto_mono.className}`}>Configurações</span>
+          }   
           <GoGear size={25} className={styles.icon} />
+        </button>
+        <button
+          className={styles.button}
+          onClick={handleShowCreditsModal}  
+        >
+          { locale == 'en-US' &&
+            <span className={`${styles.buttonText} ${roboto_mono.className}`}>Credits</span>
+          }
+          { locale == 'pt-BR' &&
+            <span lang='pt' className={`${styles.buttonText} ${roboto_mono.className}`}>Créditos</span>
+          }   
+          <GoInfo size={25} className={styles.icon} />
         </button>
       </header>
       <section className={styles.notify}>
@@ -261,6 +396,10 @@ export default function Home() {
           localHistorySetter={setLocalHistory}
           buttonValue={buttonClickValue}
           buttonValueSetter={setButtonClickValue}
+          backgroundMusic={backgroundMusic}
+          backgroundMusicSetter={setBackgroundMusic}
+          localMusic={localMusic}
+          localSound={localSound}
         />
       </main>
       <Dialog name='doubt'>
@@ -455,6 +594,181 @@ export default function Home() {
             </div>
           </div>                  
           <br/>
+          { locale == 'en-US' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Set music
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='music-active'
+                  onChange={() => storeMusicActivation(true)}
+                  className={styles.inputRadio}
+                  id='on'
+                  type='radio'
+                  checked={ localMusic && localMusic.active }
+                />
+                <label
+                  htmlFor='music-active'
+                  className={`${roboto_mono.className} ${styles.configText}`}>
+                    On | Off
+                </label>
+                <input
+                  name='music-active'
+                  onChange={() => storeMusicActivation(false)}
+                  className={styles.inputRadio}
+                  id='off'
+                  type='radio'
+                  checked={ localMusic && !localMusic.active ? true : false }
+                />
+              </div>
+            </div>
+          }
+          { locale == 'pt-BR' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                lang='pt'
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Definir música
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='music-active'
+                  onChange={() => storeMusicActivation(true)}
+                  className={styles.inputRadio}
+                  id='on'
+                  type='radio'
+                  checked={ localMusic && localMusic.active }
+                />
+                <label
+                  lang='pt'
+                  htmlFor='music-active'
+                  className={`${roboto_mono.className} ${styles.configText}`}>
+                    Ligado | Desligado
+                </label>
+                <input
+                  name='music-active'
+                  onChange={() => storeMusicActivation(false)}
+                  className={styles.inputRadio}
+                  id='off'
+                  type='radio'
+                  checked={ localMusic && !localMusic.active ? true : false }
+                />
+              </div>
+            </div>
+          }
+          <br />
+          { locale == 'en-US' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Set sounds
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='sound-active'
+                  onChange={() => storeSoundActivation(true)}
+                  className={styles.inputRadio}
+                  id='on'
+                  type='radio'
+                  checked={ localSound && localSound.active }
+                />
+                <label
+                  htmlFor='sound-active'
+                  className={`${roboto_mono.className} ${styles.configText}`}>
+                    On | Off
+                </label>
+                <input
+                  name='sound-active'
+                  onChange={() => storeSoundActivation(false)}
+                  className={styles.inputRadio}
+                  id='off'
+                  type='radio'
+                  checked={ localSound && !localSound.active ? true : false }
+                />
+              </div>
+            </div>
+          }
+          { locale == 'pt-BR' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                lang='pt'
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Definir sons
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='sound-active'
+                  onChange={() => storeSoundActivation(true)}
+                  className={styles.inputRadio}
+                  id='on'
+                  type='radio'
+                  checked={ localSound && localSound.active }
+                />
+                <label
+                  lang='pt'
+                  htmlFor='sound-active'
+                  className={`${roboto_mono.className} ${styles.configText}`}>
+                    Ligado | Desligado
+                </label>
+                <input
+                  name='sound-active'
+                  onChange={() => storeSoundActivation(false)}
+                  className={styles.inputRadio}
+                  id='off'
+                  type='radio'
+                  checked={ localSound && !localSound.active ? true : false }
+                />
+              </div>
+            </div>
+          }
+          <br />
+          { locale == 'en-US' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Set volume {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='audio-volume'
+                  onInput={storeAudioVolume}
+                  className={styles.inputRange}
+                  type='range'
+                  min='0'
+                  max='1'
+                  step='0.01'
+                  value={localMusic.volume}
+                />
+              </div>
+            </div>
+          }
+          { locale == 'pt-BR' && 
+            <div className={`${roboto_mono.className} ${styles.configSet}`}>
+              <p
+                lang='pt'
+                className={`${roboto_mono.className} ${styles.configText}`}>
+                  Definir volume {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
+              </p>
+              <div className={styles.configSet}>
+                <input
+                  name='audio-volume'
+                  onInput={storeAudioVolume}
+                  className={styles.inputRange}
+                  type='range'
+                  min='0'
+                  max='1'
+                  step='0.01'
+                  value={localMusic.volume}
+                />
+              </div>
+            </div>
+          }         
+        </article>
+      </Dialog>
+      <Dialog name='credits'>
+        <article>
           { localHistory?.wins &&
             <table className={`${styles.table} ${roboto_mono.className}`}>
               { locale == 'en-US' && 
@@ -531,22 +845,36 @@ export default function Home() {
           { locale == 'en-US' && 
             <>
               <p className={`${roboto_mono.className} ${styles.paragraph}`}>Game inspired <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">by this SigmaGeek challenge</a>.</p>
-              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>We do not perform data collection. The results displayed here are stored in your own browser and you can delete them permanently at any time <button onClick={eraseLocalHistory} className={`${styles.eraseButton} ${roboto_mono.className}`}>by clicking here</button>.</p>
+              <br />
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>Sound effects by <a className={styles.anchor} href="https://www.kenney.nl">Kenney (www.kenney.nl)</a>.</p>
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>Music by <a className={styles.anchor} href="https://www.soundimage.org">Eric Matyas (www.soundimage.org)</a>.</p>
+              <br />
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>We do not perform data collection. The results displayed here are stored in your own browser and you can delete them permanently at any time <button onClick={eraseLocalHistory} className={`${styles.eraseButton} ${roboto_mono.className}`}>by clicking here</button>.</p>
               <br/>
-              <em className={`${roboto_mono.className} ${styles.author}`}>Developed with <BsFillSuitHeartFill /> by <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
+              <em className={`${roboto_mono.className} ${styles.author}`}>Developed with <BsFillSuitHeartFill /> by <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a></em>
             </>
           }
           { locale == 'pt-BR' && 
             <>
               <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Jogo inspirado <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">neste desafio do SigmaGeek</a>.</p>
+              <br />
+              <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Efeitos sonoros por <a className={styles.anchor} href="https://www.kenney.nl">Kenney (www.kenney.nl)</a>.</p>
+              <p className={`${roboto_mono.className} ${styles.paragraph}`}>Música por <a className={styles.anchor} href="https://www.soundimage.org">Eric Matyas (www.soundimage.org)</a>.</p>              
+              <br />
               <p lang='pt' className={`${roboto_mono.className} ${styles.paragraph}`}>Não fazemos nenhum tipo de coleta de dados. Os resultados aqui exibidos estão sendo salvos no seu próprio navegador e você apagá-los permanentemente sempre que desejar <button onClick={eraseLocalHistory} className={`${styles.eraseButton} ${roboto_mono.className}`}>clicando aqui</button>.</p>
               <br/>
-              <em lang='pt' className={`${roboto_mono.className} ${styles.author}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a>.</em>
+              <em lang='pt' className={`${roboto_mono.className} ${styles.author}`}>Desenvolvido com <BsFillSuitHeartFill /> por <a className={styles.anchor} href="https://github.com/victorsgb">Victor Baptista</a></em>
             </>
           }          
         </article>
       </Dialog>
-      <ControlPad buttonValueSetter={setButtonClickValue} />      
+      <ControlPad buttonValueSetter={setButtonClickValue} />
+      { locale === 'en-US' && 
+        <footer className={`${styles.footer} ${roboto_mono.className}`}>&copy; 2023 Victor Baptista - All rights reserved.</footer>      
+      }
+      { locale === 'pt-BR' && 
+        <footer lang='pt' className={`${styles.footer} ${roboto_mono.className}`}>&copy; 2023 Victor Baptista - Todos os direitos reservados.</footer>          
+      }
     </>
   )
 }

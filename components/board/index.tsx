@@ -19,7 +19,7 @@ import styles from './board.module.css';
 import { GiCheeseWedge } from 'react-icons/gi';
 
 // Type imports
-import { buttonValues, localHistoryProps, localLoseProps, localWinProps, notificationProps } from '../../pages';
+import { buttonValues, localAudioProps, localHistoryProps, localLoseProps, localWinProps, notificationProps } from '../../pages';
 
 
 const roboto_mono = Roboto_Mono({ subsets: ['latin'] })
@@ -53,6 +53,10 @@ interface BoardProps {
   localHistorySetter: Dispatch<SetStateAction<localHistoryProps>>;
   buttonValue: buttonValues;
   buttonValueSetter: Dispatch<SetStateAction<buttonValues>>;
+  backgroundMusic: HTMLAudioElement | null;
+  backgroundMusicSetter: Dispatch<SetStateAction<HTMLAudioElement | null>>;
+  localMusic: localAudioProps;
+  localSound: localAudioProps;
 }
 
 export default function Board({
@@ -60,7 +64,11 @@ export default function Board({
   localHistory,
   localHistorySetter,
   buttonValue,
-  buttonValueSetter
+  buttonValueSetter,
+  backgroundMusic,
+  backgroundMusicSetter,
+  localMusic,
+  localSound
 }: BoardProps){
 
   const { locale } = useRouter();
@@ -156,8 +164,27 @@ export default function Board({
 
   function handleConsequencesOfNewPlayerPosition(newPlayerPosition: number[] | null) {
 
+    if (backgroundMusic === null && localMusic.active) {
+      const music = new Audio('/music/8-Bit-Indigestion_Looping.mp3');
+      music.volume = 0.5 * localMusic.volume;
+      music.play();
+  
+      backgroundMusicSetter(music);
+
+    }
+
+
     if (newPlayerPosition !== null) {
       notificationSetter(null);
+
+      var randomInt = Math.floor(Math.random() * 36) + 1;
+
+      if (localSound.active) {
+        var stepSound = new Audio(`/sound/effects/impactGlass_light_00${randomInt % 5}.ogg`);
+        stepSound.volume = 0.3 * localSound.volume;
+        stepSound.play();
+      }
+
 
       // Moving player...
       setPlayer({
@@ -192,6 +219,22 @@ export default function Board({
       // Condition to lose a life OR to lose game by touching foe
       if (matrixValuesUpdated[newPlayerPosition[0]][newPlayerPosition[1]]) {
 
+        if (localSound.active) {
+          var damageSound = new Audio(`/sound/effects/impactMining_00${randomInt % 5}.ogg`);
+          damageSound.volume = localSound.volume;
+          damageSound.play();
+        }
+
+        if (player.lives - 1 == 2 && backgroundMusic) {
+          backgroundMusic.playbackRate = 1.1;
+
+        } else if (player.lives - 1 == 1 && backgroundMusic) {
+          backgroundMusic.playbackRate = 1.3;
+
+        } else if (player.lives - 1 == 0 && backgroundMusic) {
+          backgroundMusic.playbackRate = 1.0;
+        }
+
         if (player.lives - 1 == 0) {
 
           // Condition to lose by stepping on a living cell      
@@ -207,6 +250,19 @@ export default function Board({
               type: 'lose',
               message: 'Ops... Você tocou uma célula viva!'
             });
+          }
+
+          if (backgroundMusic && localMusic.active) {
+            backgroundMusic.pause();
+            backgroundMusic.volume = 0.5 * localMusic.volume;
+            backgroundMusic.currentTime = 0;
+          }
+
+          if (localSound.active) {
+            var randomInt = Math.floor(Math.random() * 3);
+            var loseSound = new Audio(`/sound/effects/jingles_PIZZI${randomInt}.ogg`);
+            loseSound.volume = localSound.volume;
+            loseSound.play();
           }
 
           if (localStorage) {
@@ -255,10 +311,26 @@ export default function Board({
           cell_id: matrix.ids[newPlayerPosition[0]][newPlayerPosition[1]],          
           lives: player.lives - 1
         });
+  
       } else if (newPlayerPosition[0] === nextPosition[0] && newPlayerPosition[1] === nextPosition[1]) {
 
         // Condition to lose by foe!
         setGameOver(true);
+
+        if (backgroundMusic && localMusic.active) {
+          backgroundMusic.pause();
+          backgroundMusic.volume = 0.5 * localMusic.volume;
+          backgroundMusic.currentTime = 0;
+        }
+
+        if (localSound.active) {
+          var randomInt = Math.floor(Math.random() * 3);
+          var loseSound = new Audio(`/sound/effects/jingles_PIZZI${randomInt}.ogg`);
+          loseSound.volume = localSound.volume;
+          loseSound.play();
+        }
+
+
         { locale == 'en-US' && 
           notificationSetter({
             type: 'lose',
@@ -314,8 +386,7 @@ export default function Board({
           lives: 0,
           position: newPlayerPosition,
           cell_id: matrix.ids[newPlayerPosition[0]][newPlayerPosition[1]]          
-        });      
-        
+        });            
       }
 
       setStepsCount(stepsCount + 1);
@@ -334,6 +405,7 @@ export default function Board({
   }
 
   function handleRestart() {
+
     setPlayer({
       cheeses: -1,
       cell_id: 0,
@@ -363,6 +435,12 @@ export default function Board({
       document.getElementById('board')?.focus();
     }
 
+    if (backgroundMusic) {
+      backgroundMusic.play();
+      backgroundMusic.playbackRate = 1.0;
+      backgroundMusic.volume = localMusic.volume;
+    }
+
   }
 
   useEffect(() => {
@@ -381,6 +459,7 @@ export default function Board({
 
   useEffect(() => {
 
+  
     if (stepsCount === 2) {
       spawnCheese();
     }
@@ -408,6 +487,13 @@ export default function Board({
           matrix.ids[0].length * matrix.ids[1].length - 1
         )
       });
+
+      if (stepsCount > 0 && localSound.active) {
+        var randomInt = Math.floor(Math.random() * 10) + 1;
+        var grabCheeseSound = new Audio(`/sound/effects/powerUp${randomInt}.ogg`);
+        grabCheeseSound.volume = localSound.volume;
+        grabCheeseSound.play();
+      }
     }
 
     if ( 
@@ -417,6 +503,19 @@ export default function Board({
       ) {
       // Condition to win the game!
       setGameOver(true);
+      
+      if (backgroundMusic && localMusic.active) {
+        backgroundMusic.pause();
+        backgroundMusic.volume = 0.5 * localMusic.volume;
+        backgroundMusic.currentTime = 0;
+      }
+
+      if (localSound.active) {
+        var winSound = new Audio('/sound/effects/jingles_SAX10.ogg');
+        winSound.volume = localSound.volume;
+        winSound.play();
+      }
+
       { locale == 'en-US' && 
         notificationSetter({
           type: 'win',
@@ -438,8 +537,8 @@ export default function Board({
             date: JSON.stringify(new Date()),
             cheeses: player.cheeses,
             steps: stepsCount
-          }].sort((a, b) => b.cheeses - a.cheeses)
-            .sort((a, b) => a.steps - b.steps)
+          }].sort((a, b) => a.steps - b.steps)
+            .sort((a, b) => b.cheeses - a.cheeses)
             .slice(0, 5) as localWinProps[];
 
           localStorage.setItem('@app:wins', JSON.stringify(fiveBestWins))
@@ -466,12 +565,11 @@ export default function Board({
               wins: [localWin]
             })
           }
-
         }
       }
     }
 
-  }, [player.cell_id]);
+  }, [player.cell_id, stepsCount]);
 
   useEffect(() => {
 
@@ -526,6 +624,7 @@ export default function Board({
       <div className={styles.restartButtonDiv}>
         { locale == 'en-US'&&
           <button
+            disabled={stepsCount == 0}
             id='restartButton'
             title='Button to restart the game'
             className={`${styles.restartButton} ${roboto_mono.className}`}
@@ -536,6 +635,7 @@ export default function Board({
         }
         { locale == 'pt-BR'&&
           <button
+            disabled={stepsCount == 0}
             id='restartButton'
             title='Botão para reiniciar o jogo'
             className={`${styles.restartButton} ${roboto_mono.className}`}

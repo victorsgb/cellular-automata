@@ -5,22 +5,38 @@
   max-width: 40rem;
   margin: 0 auto;
   padding: 1.0rem;
+
+  border-bottom: 1px dashed gray;
 }
 
 .button {
   border: none;
   background-color: transparent;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .button:hover {
   cursor: pointer;
 }
 
+.buttonText {
+  color: rgb(var(--foreground-rgb));
+  font-size: 0.6rem;
+}
+
+.button:hover .buttonText {
+  color: gray;
+}
+
 .icon {
   color: rgb(var(--foreground-rgb));
 }
 
-.icon:hover {
+.button:hover .icon {
   color: gray;
 }
 
@@ -142,6 +158,8 @@
   border-radius: 8px;
   padding: 8px;
 
+  min-width: 50%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -164,6 +182,73 @@
 
 .inputRadio:checked {
   background-color: rgb(var(--foreground-rgb));
+}
+
+.inputRange {
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+  
+  width: 100%; /* Specific width is required for Firefox. */
+  background: transparent; /* Otherwise white in Chrome */
+}
+
+.inputRange::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  background-color: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+.inputRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border: 2px solid gray;
+  border-radius: 50%;
+  background: rgb(var(--foreground-rgb));
+  cursor: pointer;
+  margin-top: -6px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+}
+
+.inputRange::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 999px;
+  background: rgb(var(--foreground-rgb));
+  cursor: pointer;
+}
+
+.inputRange::-ms-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 999px;
+  background: rgb(var(--foreground-rgb));
+  cursor: pointer;
+}
+
+.inputRange::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: gray;
+  border-radius: 5px;
+}
+
+.inputRange::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgb(var(--foreground-rgb));
+  border-radius: 5px; 
+}
+
+.inputRange::-ms-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgb(var(--foreground-rgb));
+  border-radius: 5px;  
 }
 
 .player {
@@ -227,4 +312,14 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.footer {
+  color: rgb(var(--foreground-rgb));
+  font-size: 0.9rem;
+  text-align: center; 
+
+  border-top: 1px solid gray;
+  margin: 8px;
+  padding-top: 3px;
 }
