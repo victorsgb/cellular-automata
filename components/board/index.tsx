@@ -435,7 +435,7 @@ export default function Board({
       document.getElementById('board')?.focus();
     }
 
-    if (backgroundMusic) {
+    if (backgroundMusic && localMusic.active) {
       backgroundMusic.play();
       backgroundMusic.playbackRate = 1.0;
       backgroundMusic.volume = localMusic.volume;

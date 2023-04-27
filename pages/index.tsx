@@ -290,7 +290,7 @@ export default function Home() {
             <span className={`${styles.buttonText} ${roboto_mono.className}`}>Config</span>
           }
           { locale == 'pt-BR' &&
-            <span lang='pt' className={`${styles.buttonText} ${roboto_mono.className}`}>Configurações</span>
+            <span lang='pt' className={`${styles.buttonText} ${roboto_mono.className}`}>Ajustes</span>
           }   
           <GoGear size={25} className={styles.icon} />
         </button>
