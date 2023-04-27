@@ -160,6 +160,7 @@
   padding: 8px;
 
   min-width: fit-content;
+  white-space: nowrap;
 
   display: flex;
   align-items: center;
@@ -170,6 +171,11 @@
 .configText {
   color: rgb(var(--foreground-rgb));
   font-size: 1.0rem;
+}
+
+.configOptions {
+  color: rgb(var(--foreground-rgb));
+  font-size: 0.7rem;
 }
 
 .inputRadio {
@@ -189,7 +195,7 @@
 .inputRange {
   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
   
-  width: 100%; /* Specific width is required for Firefox. */
+  min-width: fit-content;
   background: transparent; /* Otherwise white in Chrome */
 }
 

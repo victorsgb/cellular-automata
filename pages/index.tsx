@@ -1,5 +1,5 @@
 // Core dependencies
-import { Roboto_Mono, Lora } from 'next/font/google';
+import { Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -49,13 +49,14 @@ export interface localAudioProps {
 export type buttonValues = 'U' | 'D' | 'L' | 'R' | null;
 
 const roboto_mono = Roboto_Mono({ subsets: ['latin'] });
-const lora = Lora({ subsets: ['latin'] })
 
 
 export default function Home() {
 
   const router = useRouter();
   const { locale, asPath } = useRouter();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null >(null);
 
@@ -255,6 +256,14 @@ export default function Home() {
 
   }, [localSound?.active, localSound?.volume]);
 
+  useEffect(() => {
+
+    if (loading) {
+      setTimeout(() => setLoading(false), 500);
+    }
+
+  }, [loading]);
+
   return (
     <>
       <Head>
@@ -400,6 +409,8 @@ export default function Home() {
           backgroundMusicSetter={setBackgroundMusic}
           localMusic={localMusic}
           localSound={localSound}
+          loading={loading}
+          loadingSetter={setLoading}
         />
       </main>
       <Dialog name='doubt'>
@@ -500,7 +511,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='theme'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     Light | Dark
                 </label>
                 <input
@@ -541,7 +552,7 @@ export default function Home() {
                 <label
                   lang='pt'
                   htmlFor='theme'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     Claro | Escuro
                 </label>
                 <input
@@ -578,7 +589,7 @@ export default function Home() {
               />
               <label
                 htmlFor='theme'
-                className={`${roboto_mono.className} ${styles.configText}`}>
+                className={`${roboto_mono.className} ${styles.configOptions}`}>
                   English | Português
               </label>
               <input
@@ -611,7 +622,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='music-active'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     On | Off
                 </label>
                 <input
@@ -644,7 +655,7 @@ export default function Home() {
                 <label
                   lang='pt'
                   htmlFor='music-active'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     Ligado | Desligado
                 </label>
                 <input
@@ -676,7 +687,7 @@ export default function Home() {
                 />
                 <label
                   htmlFor='sound-active'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     On | Off
                 </label>
                 <input
@@ -709,7 +720,7 @@ export default function Home() {
                 <label
                   lang='pt'
                   htmlFor='sound-active'
-                  className={`${roboto_mono.className} ${styles.configText}`}>
+                  className={`${roboto_mono.className} ${styles.configOptions}`}>
                     Ligado | Desligado
                 </label>
                 <input
@@ -728,7 +739,7 @@ export default function Home() {
             <div className={`${roboto_mono.className} ${styles.configSet}`}>
               <p
                 className={`${roboto_mono.className} ${styles.configText}`}>
-                  Set volume {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
+                  Set volume: {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
               </p>
               <div className={styles.configSet}>
                 <input
@@ -749,7 +760,7 @@ export default function Home() {
               <p
                 lang='pt'
                 className={`${roboto_mono.className} ${styles.configText}`}>
-                  Definir volume {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
+                  Definir volume: {String(Math.floor(localMusic.volume * 100)).padStart(2, '0')}%
               </p>
               <div className={styles.configSet}>
                 <input
@@ -868,7 +879,10 @@ export default function Home() {
           }          
         </article>
       </Dialog>
-      <ControlPad buttonValueSetter={setButtonClickValue} />
+      <ControlPad
+        buttonValueSetter={setButtonClickValue}
+        loading={loading}
+      />
       { locale === 'en-US' && 
         <footer className={`${styles.footer} ${roboto_mono.className}`}>&copy; 2023 Victor Baptista - All rights reserved.</footer>      
       }

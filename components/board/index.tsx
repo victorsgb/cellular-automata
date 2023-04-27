@@ -57,6 +57,8 @@ interface BoardProps {
   backgroundMusicSetter: Dispatch<SetStateAction<HTMLAudioElement | null>>;
   localMusic: localAudioProps;
   localSound: localAudioProps;
+  loading: boolean;
+  loadingSetter: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function Board({
@@ -68,7 +70,9 @@ export default function Board({
   backgroundMusic,
   backgroundMusicSetter,
   localMusic,
-  localSound
+  localSound,
+  loading,
+  loadingSetter
 }: BoardProps){
 
   const { locale } = useRouter();
@@ -163,6 +167,10 @@ export default function Board({
   }
 
   function handleConsequencesOfNewPlayerPosition(newPlayerPosition: number[] | null) {
+  
+    if (loading) {
+      return
+    }
 
     if (backgroundMusic === null && localMusic.active) {
       const music = new Audio('/music/8-Bit-Indigestion_Looping.mp3');
@@ -170,11 +178,13 @@ export default function Board({
       music.play();
   
       backgroundMusicSetter(music);
-
     }
 
 
     if (newPlayerPosition !== null) {
+
+      loadingSetter(true);
+
       notificationSetter(null);
 
       var randomInt = Math.floor(Math.random() * 36) + 1;
@@ -430,6 +440,8 @@ export default function Board({
 
     setGameOver(false);
     notificationSetter(null);
+
+    loadingSetter(false);
 
     if (document) {
       document.getElementById('board')?.focus();
