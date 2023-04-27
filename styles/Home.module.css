@@ -124,6 +124,7 @@
 
 .inform {
   width: 70vw;
+  max-width: 420px;
   text-align: center;
   font-size: clamp(0.6rem, 0.6rem + 1vw, 1rem);
 }

@@ -34,7 +34,7 @@ export default function ControlPad({buttonValueSetter, loading}: ControlPadProps
         >
           <IoMdArrowDropup
             className={styles.icon}
-            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a cima' : 'Button to move your avatar up'}
+            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para cima' : 'Button to move your avatar up'}
           />
         </button>
       </div>
@@ -46,7 +46,7 @@ export default function ControlPad({buttonValueSetter, loading}: ControlPadProps
         >
           <IoMdArrowDropleft
             className={styles.icon}
-            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a cima' : 'Button to move your avatar to the left'}
+            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a esquerda' : 'Button to move your avatar to the left'}
           />
         </button>
         <div className={styles.void}></div>
@@ -57,7 +57,7 @@ export default function ControlPad({buttonValueSetter, loading}: ControlPadProps
         >
           <IoMdArrowDropright
             className={styles.icon}
-            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a cima' : 'Button to move your avatar to the right'}
+            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a direita' : 'Button to move your avatar to the right'}
           />
         </button>
       </div>
@@ -69,7 +69,7 @@ export default function ControlPad({buttonValueSetter, loading}: ControlPadProps
         >
           <IoMdArrowDropdown
             className={styles.icon}
-            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para a cima' : 'Button to move your avatar down'}
+            title={locale == 'pt-BR' ? 'Botão para mover seu avatar para baixo' : 'Button to move your avatar down'}
           />
         </button>      
       </div>

@@ -274,6 +274,7 @@ export default function Home() {
       </Head>
       <header className={styles.header}>
         <button
+          title={locale == 'pt-BR' ? 'Botão para exibir o objetivo do jogo' : 'Button to exhibit the objective of the game'}
           className={styles.button}
           onClick={handleShowDoubtModal}  
         >
@@ -292,6 +293,7 @@ export default function Home() {
           <h3 lang='pt' className={roboto_mono.className}>Jogo do Autômato Celular</h3>
         }
         <button
+          title={locale == 'pt-BR' ? 'Botão para exibir as configurações disponíveis, tais como o idioma e tema' : 'Button to exhibit the available configurations, such as language and theme'}
           className={styles.button}
           onClick={handleShowConfigModal}  
         >
@@ -304,6 +306,7 @@ export default function Home() {
           <GoGear size={25} className={styles.icon} />
         </button>
         <button
+          title={locale == 'pt-BR' ? 'Botão para exibir os créditos, bem como visualizar suas melhores performances no jogo' : 'Button to exhibit credits and also visualize your best performances on the game'}
           className={styles.button}
           onClick={handleShowCreditsModal}  
         >
