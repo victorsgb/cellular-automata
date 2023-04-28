@@ -141,7 +141,19 @@
 }
 
 .paragraph {
-  text-align: justify;
+  text-align: center;
+  color: rgb(var(--foreground-rgb));
+  font-size: clamp(0.8rem, 0.8rem + 1vw, 1.0rem);
+}
+
+.paragraphLeftAligned {
+  text-align: left;
+  color: rgb(var(--foreground-rgb));
+  font-size: clamp(0.8rem, 0.8rem + 1vw, 1.0rem);
+}
+
+.paragraphRightAligned {
+  text-align: right;
   color: rgb(var(--foreground-rgb));
   font-size: clamp(0.8rem, 0.8rem + 1vw, 1.0rem);
 }
@@ -321,6 +333,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.author svg {
+  min-width: 10px;
 }
 
 .footer {

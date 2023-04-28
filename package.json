@@ -2,6 +2,10 @@
   "name": "cellular-automata",
   "version": "0.1.0",
   "private": true,
+  "author": "Victor S G Baptista",
+  "email": "victorsgb@gmail.com",
+  "url": "https://github.com/victorsgb",
+  "homepage": "https://github.com/victorsgb/cellular-automata",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

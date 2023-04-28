@@ -130,18 +130,12 @@ export default function Board({
     switch (event.key) {
       case "Enter":
         handleRestart();
-        { locale == 'en-US' && 
-          notificationSetter({
-            type: 'alert',
-            message: 'You restarted the game!'
-          });
-        }
-        { locale == 'pt-BR' && 
-          notificationSetter({
-            type: 'alert',
-            message: 'Você recomeçou o jogo!'
-          });
-        }
+        notificationSetter({
+          type: 'alert',
+          message: locale == 'pt-BR'
+            ? 'Você recomeçou o jogo!'
+            : 'You restarted the game!' 
+        });
         break;
       case "ArrowDown":
         newPlayerPosition = mx.movePlayer(matrix.values, player.position, 'D');
@@ -249,18 +243,12 @@ export default function Board({
 
           // Condition to lose by stepping on a living cell      
           setGameOver(true);
-          { locale == 'en-US' && 
-            notificationSetter({
-              type: 'lose',
-              message: 'Whoa... You touched a living cell!'
-            });
-          }
-          { locale == 'pt-BR' && 
-            notificationSetter({
-              type: 'lose',
-              message: 'Ops... Você tocou uma célula viva!'
-            });
-          }
+          notificationSetter({
+            type: 'lose',
+            message: locale == 'pt-BR'
+              ? 'Ops... Você tocou uma célula viva!'
+              : 'Whoa... You touched a living cell!'
+          });
 
           if (backgroundMusic && localMusic.active) {
             backgroundMusic.pause();
@@ -340,19 +328,12 @@ export default function Board({
           loseSound.play();
         }
 
-
-        { locale == 'en-US' && 
-          notificationSetter({
-            type: 'lose',
-            message: 'Oh no... You got eaten by the cat!'
-          });
-        }
-        { locale == 'pt-BR' && 
-          notificationSetter({
-            type: 'lose',
-            message: 'Oh, não... Você foi engolido pelo gato!'
-          });
-        }
+        notificationSetter({
+          type: 'lose',
+          message: locale == 'pt-BR'
+            ? 'Oh, não... Você foi engolido pelo gato!'
+            : 'Oh no... You got eaten by the cat!'
+        });
         if (localStorage) {
           let loseHistory: localLoseProps[] = JSON.parse(localStorage.getItem('@app:loses') as string);
 
@@ -528,18 +509,12 @@ export default function Board({
         winSound.play();
       }
 
-      { locale == 'en-US' && 
-        notificationSetter({
-          type: 'win',
-          message: 'Congrats! Try taking more cheese next time!'
-        });
-      }
-      { locale == 'pt-BR' && 
-        notificationSetter({
-          type: 'win',
-          message: 'Parabéns! Tente trazer mais queijos para casa da próxima vez!'
-        });
-      }
+      notificationSetter({
+        type: 'win',
+        message: locale == 'pt-BR'
+          ? 'Parabéns! Tente trazer mais queijos para casa da próxima vez!'
+          : 'Congrats! Try taking more cheese next time!'
+      });
       if (localStorage) {
         let winHistory: localWinProps[] = JSON.parse(localStorage.getItem('@app:wins') as string);
 
@@ -611,12 +586,11 @@ export default function Board({
               : <GiCheeseWedge />
             : ''
         }</p>
-        { locale == 'en-US' && 
-          <p className={roboto_mono.className}>{`${stepsCount > 0 ? stepsCount : 'No'} step${stepsCount > 1  ? 's' : ''}`}</p>
-        }
-        { locale == 'pt-BR' && 
-          <p className={roboto_mono.className}>{`${stepsCount > 0 ? stepsCount : 'Nenhum'} passo${stepsCount > 1  ? 's' : ''}`}</p>
-        }
+        <p className={roboto_mono.className}>
+          { locale == 'pt-BR'
+            ? `${stepsCount > 0 ? stepsCount : 'Nenhum'} passo${stepsCount > 1  ? 's' : ''}`
+            : `${stepsCount > 0 ? stepsCount : 'No'} step${stepsCount > 1  ? 's' : ''}` }
+        </p>
       </div>
       { matrix.ids[0].map((_row, index_row) => (
         <div key={index_row} className={styles.row}>
@@ -634,28 +608,18 @@ export default function Board({
         </div>
       )) }
       <div className={styles.restartButtonDiv}>
-        { locale == 'en-US'&&
-          <button
-            disabled={stepsCount == 0}
-            id='restartButton'
-            title='Button to restart the game'
-            className={`${styles.restartButton} ${roboto_mono.className}`}
-            onClick={handleRestart}
-          >
-            Restart!
-          </button>
-        }
-        { locale == 'pt-BR'&&
-          <button
-            disabled={stepsCount == 0}
-            id='restartButton'
-            title='Botão para reiniciar o jogo'
-            className={`${styles.restartButton} ${roboto_mono.className}`}
-            onClick={handleRestart}
-          >
-            Recomeçar!
-          </button>
-        }
+        <button
+          disabled={stepsCount == 0}
+          id='restartButton'
+          title={ locale == 'pt-BR'
+            ? 'Botão para reiniciar o jogo'
+            : 'Button to restart the game' }
+          className={`${styles.restartButton} ${roboto_mono.className}`}
+          onClick={handleRestart} >
+          { locale == 'pt-BR'
+            ? 'Reiniciar!'
+            : 'Restart!' }
+        </button>
       </div>
     </div>
   )
