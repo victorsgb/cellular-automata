@@ -37,3 +37,6 @@ next-env.d.ts
 
 # audio files not used
 /audio
+
+# plantuml files
+*.puml

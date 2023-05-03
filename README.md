@@ -1,31 +1,113 @@
-# Ideia de projeto
+# 🇺🇲 English version
 
-Este projeto é sobre um mini-game de um board 10x10 no qual o usuário deverá mover um robô da casa mais acima e à esquerda até a casa mais abaixo e à direita. Porém, a cada passo, algumas células deverão ficar vivas ou mortas, a depender de um algoritmo de células autômatas que ficará escondido ao usuário.
+Personal web page project developed with React.js and Next.js. It is a mini-game that addresses the concept of automata cells, inspired by the first step of  [this challenge by Sigma Geek](https://sigmageek.com/challenge/stone-automata-maze-challenge).
 
-Cada vez que o usuário andar em uma casa viva, ele "morre", devendo reiniciar do começo. Para conseguir se mover até o final com sucesso, será necessário entender qual a lógica de nascimento, manutenção e morte das células. Essas lógicas dependem unicamente da quantidade de vizinhos vivos ou mortos nas 8 células que rodeiam cada célula. Células de borda são consideradas como células "mortas", para este fim.
+[Project demonstration running on the web!](https://cellular-automata-beryl.vercel.app)
 
-Pretendo criar uma única página, o mais rápido e simples possível, para ter o projeto rodando. Não será necessário autenticação, nada do tipo. Apenas o estado atual do usuário e do game board será salvo em localhost, para que não haja perda de dados caso o usuário feche e abra a página novamente.
+## 🔥 Main features
 
-Todo o processamento rodará no cliente.
+- ✅ Project split into React.js components
+- ✅ Use of *useContext* to directly pass the current state of each pixel of the automata cell to all other components
+- ✅ Logic for automatically moving the cat, anticipating the next generations of the state of the automaton cell to decide where to go, with the goal of reaching the same position as the avatar representing the player
+- ✅ Allows the use of keyboard and mouse for better accessibility
+- ✅ Use of HTML *dialogs* to create three modals: one to inform about the goal of the game, another to show the settings, and another to show the credits and the history of victories/defeats stored in *localStorage*
+- ✅ Customizable page theme (between light/dark)
+- ✅ Applied internationalization (default: en-US, but also localized in pt- BR )
+- ✅ Customizable background music and sound effects (between on/off and volume control)
+- ✅ Semantic HTML, animations via CSS, and more...
 
-## Processo lógico
+## External dependencies
 
-Ao abrir o site, verifica-se se o game está no começo. Se estiver, calcula-se o estado inicial das células, levando em conta uma seed fixa e determinística (e.g. primeira seed = 0).
+![Dependencies](https://victorsgb.github.io/cellular-automata/public/dependencies.png "Dependencies")
 
-- A lógica de atualização das células é determinística, sempre a mesma para uma dada seed. Será a mesma seed responsável por retornar o estado inicial.
+## Languages and tools
 
-- O game certamente estará no começo se não houver dados salvos no localStorage. Se houver dados, daí verifica-se se o game está realmente no começo.
+<p align="left">
+  <a href="https://nextjs.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original-wordmark.svg" alt="next" width="40" height="40"/> </a>
+  <a href="https://react.dev/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="react" width="40" height="40"/> </a> 
+  <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/> </a> 
+  <a href="https://developer.mozilla.org/en-US/docs/Web/Html" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg" alt="html5" width="40" height="40"/> </a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/Css" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg" alt="css3" width="40" height="40"/> </a>
+</p>  
 
-> Posição do player na casa inicial não é garantia de que o game está no começo!
+## Folders structure
 
-- Se o game não estiver no começo, ao invés de se computar o estado inicial para a seed armazenada, deve-se retornar o estado atual das células, bem como a posição do player.
+![Project structure](https://victorsgb.github.io/cellular-automata/public/project_structure.png "Project structure")
 
-- Após usuário apertar alguma tecla direcional (setas ou conjunto AWSD), o player se move e o estado das células é atualizado conforme as regras da seed.
+## How to run this project locally
 
-> - Se o player parar numa casa com célula viva, não será mais possível se mover, apenas recomeçar o jogo novamente, para a seed salva em localStorage (caso houver), ou seed inicial (caso não houver).
-> - Se o player parar numa casa com célula morta, a UI ficará "esperando" sua próxima ação, a fim de atualizar o estado novamente, e assim por diante.
-> - Se o player chegar no fim (célula mais abaixo e à direita), aparece um botão permitindo o jogador "passar de fase". Sua pontuação é incrementada, sendo salva em localStorage também, e uma nova seed é computada e salva em localStorage.
-> - O cálculo da próxima seed leva em conta a seed atual, de maneira determinística, a fim de que cada qualquer jogador avance pelas mesmas fases, sempre.
-> - Daí, começa-se tudo novamente, mas na próxima fase!
+Presuming you already have `git` and `npm` on your local machine, you should follow these simple steps. First, change to the directory you are interested in and clone the repository:
 
-A cellular automaton is a mathematical model consisting of a grid of cells that evolve over time according to a set of simple rules based on the states of neighboring cells. Each cell can have a finite number of states, typically represented by colors, and the rules define how the states of the cells change from one time step to the next. Cellular automata have been used to model a wide range of natural and artificial phenomena, including the behavior of fluids, the growth of plants, and the spread of disease.
+> `git clone https://github.com/victorsgb/cellular-automata`
+
+Then, go to the newly created folder containing your new local repository:
+
+> `cd cellular-automata`
+
+Install the project's dependencies (assuming you have the `npm` package installed on your machine):
+
+> `npm install`
+
+And that's it! You can now run the project in a developer environment. The server will start on port 3000 after you run the following command:
+
+> `npm run dev`
+
+The application is expected to be running normally in your default browser.
+
+---
+
+# 🇧🇷 Versão em português
+
+Projeto pessoal de página web desenvolvida com React.js e Next.js. Trata-se de um mini-game que aborda o conceito de células autômatas, inspirado na primeira etapa [deste desafio do Sigma Geek](https://sigmageek.com/challenge/stone-automata-maze-challenge).
+
+[Uma demonstração do projeto rodando na web!](https://cellular-automata-beryl.vercel.app)
+
+## 🔥 Principais recursos
+
+- ✅ Projeto separado em componentes do React.js
+- ✅ Uso do *useContext* para o compartilhamento direto do estado corrente de cada pixel da célula autômata por todos os demais componentes
+- ✅ Lógica para movimentação automática do gato, que antecipa as próximas gerações de estado da célula autômata para decidir para onde ir, visando atingir a mesma posição do avatar representando o jogador
+- ✅ Permitido o uso de keyboard e mouse para maior acessibilidade
+- ✅ Uso de *dialogs* do HTML para construção de três modais: um para informar o objetivo do jogo, outro para exibir as configurações, e outro para exibir os créditos e histórico de vitórias/derrotas armazenado em *localStorage*
+- ✅ Tema da página customizável (entre claro/escuro)
+- ✅ Internacionalização aplicada (padrão: en-US, mas localizada também em pt-BR)
+- ✅ Música de fundo e efeitos sonoros ajustáveis (entre ligado/desligado e ajuste de volume)
+- ✅ HTML semântico, animações via CSS, dentre outras...
+
+## Dependências externas
+
+![Dependências do projeto](https://victorsgb.github.io/cellular-automata/public/dependencies.png "Dependências do projeto")
+
+## Linguagens e ferramentas
+
+<p align="left">
+  <a href="https://nextjs.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original-wordmark.svg" alt="next" width="40" height="40"/> </a>
+  <a href="https://react.dev/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="react" width="40" height="40"/> </a> 
+  <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/> </a> 
+  <a href="https://developer.mozilla.org/en-US/docs/Web/Html" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg" alt="html5" width="40" height="40"/> </a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/Css" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg" alt="css3" width="40" height="40"/> </a>
+</p>  
+
+## Estrutura das pastas
+
+![Estrutura do projeto](https://victorsgb.github.io/cellular-automata/public/project_structure.png "Estrutura do projeto")
+
+## Como rodar este projeto localmente
+
+Presumindo que você já tenha `git` e `npm` instalados na sua máquina local, você deve seguir estes simples exemplos práticos. Primeiro, vá para um diretório de seu interesse e faça uma clonagem deste repositório:
+
+> `git clone https://github.com/victorsgb/cellular-automata`
+
+Então, acesse esta nova pasta recém-criada:
+
+> `cd cellular-automata`
+
+Instale as dependências de projeto:
+
+> `npm install`
+
+E é isso! Você pode agora rodar o projeto em ambiente de desenvolvimento. O servidor irá iniciar na porta 3000 após o seguinte comando:
+
+> `npm run dev`
+
+Espera-se que a aplicação rode normalmente no seu navegador padrão.
