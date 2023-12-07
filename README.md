@@ -1,6 +1,6 @@
 # 🇺🇲 English version
 
-Personal web page project developed with React.js and Next.js. It is a mini-game that addresses the concept of automata cells, inspired by the first step of  [this challenge by Sigma Geek](https://sigmageek.com/challenge/stone-automata-maze-challenge).
+Personal web page project developed with React.js and Next.js. It is a mini-game that addresses the concept of automata cells, inspired by the first step of  [this challenge of Sigma Geek in partnership with Stone](https://sigmageek.com/challenge/stone-automata-maze-challenge).
 
 [Project demonstration running on the web!](https://cellular-automata-beryl.vercel.app)
 
@@ -23,7 +23,7 @@ Personal web page project developed with React.js and Next.js. It is a mini-game
 ## Languages and tools
 
 <p align="left">
-  <a href="https://nextjs.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original-wordmark.svg" alt="next" width="40" height="40"/> </a>
+  <a href="https://nextjs.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original-wordmark.svg" alt="next" width="40" height="40"/></a>
   <a href="https://react.dev/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="react" width="40" height="40"/> </a> 
   <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/> </a> 
   <a href="https://developer.mozilla.org/en-US/docs/Web/Html" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg" alt="html5" width="40" height="40"/> </a>
@@ -58,7 +58,7 @@ The application is expected to be running normally in your default browser.
 
 # 🇧🇷 Versão em português
 
-Projeto pessoal de página web desenvolvida com React.js e Next.js. Trata-se de um mini-game que aborda o conceito de células autômatas, inspirado na primeira etapa [deste desafio do Sigma Geek](https://sigmageek.com/challenge/stone-automata-maze-challenge).
+Projeto pessoal de página web desenvolvida com React.js e Next.js. Trata-se de um mini-game que aborda o conceito de células autômatas, inspirado na primeira etapa [deste desafio do Sigma Geek em parceria com a Stone](https://sigmageek.com/challenge/stone-automata-maze-challenge).
 
 [Uma demonstração do projeto rodando na web!](https://cellular-automata-beryl.vercel.app)
 

@@ -270,7 +270,7 @@ export default function Home() {
         <title>{locale == 'pt-BR' ? 'Jogo do Autômato Celular' : 'Cellular Automaton Game'}</title>
         <meta 
           name='description'
-          content={locale == 'pt-BR' ? 'Jogo inspirado em um desafio do Sigma Geek para tratar do tema de autômatos celulares' : 'Game inspired by a Sigma Geek challenge to address the cellular automata subject'}
+          content={locale == 'pt-BR' ? 'Jogo inspirado em um desafio do Sigma Geek em parceria com a Stone para tratar do tema de autômatos celulares' : 'Game inspired in a Sigma Geek challenge in partnership with Stone to address the cellular automata subject'}
         />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
@@ -772,8 +772,8 @@ export default function Home() {
                 : 'Game inspired ' }
               <a className={styles.anchor} href="https://sigmageek.com/challenge/stone-automata-maze-challenge">
                 { locale == 'pt-BR'
-                  ? 'neste desafio do Sigma Geek.'
-                  : 'by this Sigma Geek challenge.' }
+                  ? 'neste desafio do Sigma Geek em parceria com a Stone.'
+                  : 'by this Sigma Geek challenge in partnership with Stone.' }
               </a>
             </p>
             <br />
